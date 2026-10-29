@@ -6,21 +6,18 @@ const movesByType={Fogo:[['Faísca Rubra',40],['Fôlego Quente',32],['Brasa Viva
 export const SPECIES=raw.map(([name,type,description,color,rarity,habitat],i)=>({id:i+1,name,type,description,color,rarity,habitat,moves:movesByType[type],captureRate:rarity==='comum'?0.72:rarity==='incomum'?0.52:rarity==='raro'?0.3:0.12,evolution:i<8?{at:16,name:i===0?'Raizal':i===1?'Solgrifo':i===2?'Coralume':raw[(i+8)%20][0]}:null}));
 export function createMonster(id,level=3){const s=SPECIES[(id-1)%SPECIES.length],maxHp=18+level*5+((id*7)%9);return{speciesId:s.id,name:s.name,type:s.type,level,xp:0,hp:maxHp,maxHp,attack:7+level*2+(id%4),defense:6+level*2+(id%5),speed:6+level*2+((id*3)%6),moves:s.moves.slice(0,Math.min(4,2+Math.floor(level/5))).map(([name,power])=>({name,power,type:s.type})),status:null};}
 export function getSpecies(id){return SPECIES.find(s=>s.id===id)}
-export function drawMonster(ctx,id,x,y,size=1,flip=false){const s=getSpecies(id);if(!s)return;const px=size;ctx.save();ctx.translate(x-6*px,y-6*px);if(flip)ctx.scale(-1,1);const rect=(a,b,w,h,c)=>{ctx.fillStyle=c;ctx.fillRect(Math.round(a*px),Math.round(b*px),Math.round(w*px),Math.round(h*px))};const c=s.color,d='#27332e',l='#f3e9c7',dark='#39433c';
-  // Individually varied pixel silhouettes: ears, crest, wings, shell and tails by species.
-  const shape=id%8,accent=TYPE_COLORS[s.type];rect(2,5,8,6,d);rect(3,4,6,6,c);rect(4,2,4,5,d);rect(5,3,2,3,c);rect(3,9,2,2,d);rect(7,9,2,2,d);rect(4,6,1,1,d);rect(7,6,1,1,d);rect(4,6,1,1,l);rect(7,6,1,1,l);
-  if(shape===0){rect(4,1,1,3,'#78a968');rect(7,0,1,4,'#a9cc73');rect(2,4,2,3,c)}
-  if(shape===1){rect(4,1,1,3,'#f6c260');rect(7,0,1,3,'#ef7144');rect(8,9,3,2,'#efa355')}
-  if(shape===2){rect(4,1,4,2,'#91d6df');rect(2,4,2,3,'#78c5d2');rect(9,4,2,3,'#78c5d2')}
-  if(shape===3){rect(4,0,1,3,'#f4da5e');rect(7,0,1,3,'#f4da5e');rect(9,7,3,1,'#f4da5e')}
-  if(shape===4){rect(3,3,6,2,'#d1b58a');rect(2,6,2,3,'#d1b58a');rect(8,6,2,3,'#d1b58a')}
-  if(shape===5){rect(1,4,3,3,'#d4e5da');rect(8,3,3,3,'#d4e5da');rect(4,1,4,2,'#d4e5da')}
-  if(shape===6){rect(4,0,1,4,'#d5f3ef');rect(7,0,1,4,'#d5f3ef');rect(2,4,2,2,'#d5f3ef')}
-  if(shape===7){rect(4,1,4,2,'#54436c');rect(3,3,1,3,'#54436c');rect(9,4,2,1,'#b29bd7')}
-  if(id%5===0){rect(4,1,1,3,accent);rect(7,0,1,4,accent);rect(10,6,2,1,accent)}
-  if(id%5===1){rect(0,5,3,3,accent);rect(9,4,3,3,accent);rect(1,6,2,1,l);rect(10,5,2,1,l)}
-  if(id%5===2){rect(2,7,2,2,accent);rect(8,7,2,2,accent);rect(5,9,2,1,l)}
-  if(id%5===3){rect(9,8,2,2,d);rect(10,7,2,2,accent);rect(11,6,1,1,accent)}
-  if(id%5===4){rect(5,1,2,2,accent);rect(4,2,4,1,accent);rect(2,5,1,2,accent)}
-  // Individual markings and a shadow anchor every sprite in the pixel-art world.
-  rect(2,11,8,1,'#182b26');if(id%3===0)rect(5,8,2,1,l);if(id%4===0)rect(8,3,2,1,'#f1d283');ctx.restore();}
+export function drawMonster(ctx,id,x,y,size=1,flip=false){const s=getSpecies(id);if(!s)return;const px=size;ctx.save();ctx.translate(x-12*px,y-12*px);if(flip)ctx.scale(-1,1);const rect=(a,b,w,h,color)=>{ctx.fillStyle=color;ctx.fillRect(Math.round(a*px),Math.round(b*px),Math.round(w*px),Math.round(h*px))};const c=s.color,d='#26372f',shade='#53624b',light='#d6d58f',cream='#f4e9c4',accent=TYPE_COLORS[s.type],shape=(id-1)%8;
+  // 24×24 native pixel sprite: layered outline, limbs, markings and a distinct elemental silhouette.
+  rect(5,22,14,1,'#192a25');rect(6,19,4,4,d);rect(15,19,4,4,d);rect(7,19,2,2,shade);rect(16,19,2,2,shade);
+  rect(5,9,14,11,d);rect(6,8,12,11,c);rect(8,13,9,4,shade);rect(9,14,7,2,light);rect(4,11,3,6,d);rect(17,11,3,6,d);rect(5,12,2,4,c);rect(18,12,2,4,shade);
+  rect(6,4,12,8,d);rect(7,3,10,8,c);rect(9,4,5,2,light);rect(8,7,3,3,cream);rect(14,7,3,3,cream);rect(9,8,1,2,d);rect(15,8,1,2,d);rect(10,9,5,1,d);rect(11,10,3,1,light);
+  if(shape===0){rect(7,0,3,5,d);rect(8,1,2,3,'#94bc65');rect(15,1,3,5,d);rect(15,2,2,3,'#b5d879');rect(2,13,5,3,accent);rect(3,12,2,5,'#d7d58f');rect(18,16,4,3,d);rect(20,15,3,3,accent)}
+  if(shape===1){rect(7,1,3,5,d);rect(8,0,2,5,'#f5ca63');rect(14,2,4,4,d);rect(15,1,2,4,'#ed704c');rect(18,14,4,3,d);rect(21,12,3,4,'#f4b553');rect(22,11,2,2,'#fff0a2')}
+  if(shape===2){rect(2,8,5,7,d);rect(0,6,5,6,'#72cad0');rect(17,10,5,7,d);rect(20,8,4,6,'#80d4d4');rect(9,1,6,3,d);rect(10,2,4,2,'#b6e5dc');rect(4,18,3,2,'#8ce0df')}
+  if(shape===3){rect(7,0,3,6,d);rect(8,1,2,4,'#f1d951');rect(14,0,3,6,d);rect(15,1,2,4,'#fff078');rect(18,14,4,2,d);rect(20,12,2,4,'#f2dc51');rect(21,11,2,2,cream)}
+  if(shape===4){rect(6,5,12,5,d);rect(7,4,10,4,'#d0b98c');rect(9,5,6,2,'#e1d0a5');rect(3,12,4,5,d);rect(4,12,3,3,'#cfb991');rect(17,12,4,5,d);rect(18,12,3,3,'#cfb991');rect(9,15,7,2,accent)}
+  if(shape===5){rect(1,8,6,7,d);rect(0,6,6,6,'#dce9d8');rect(17,8,6,7,d);rect(18,6,6,6,'#c4ded3');rect(8,1,8,3,d);rect(9,2,6,2,'#edf1d8');rect(5,15,3,2,'#e5efda');rect(17,15,3,2,'#e5efda')}
+  if(shape===6){rect(7,0,3,6,d);rect(8,1,2,4,'#ddf4ed');rect(14,0,3,6,d);rect(15,1,2,4,'#bce9e9');rect(5,11,3,3,'#9ee0e2');rect(17,11,3,3,'#d5ffff');rect(10,14,5,2,'#ddffff')}
+  if(shape===7){rect(2,9,6,7,d);rect(0,7,7,6,'#68558a');rect(17,9,6,7,d);rect(18,7,6,6,'#493c66');rect(8,1,8,4,d);rect(9,2,6,2,'#a994d1');rect(18,16,5,3,'#30283f');rect(21,15,3,3,accent)}
+  // Type sigil, cheek pixels and species-specific marks are the final identifying pixels.
+  rect(10,12,4,1,accent);if(id%3===0){rect(6,15,2,2,light);rect(17,15,2,2,light)}if(id%4===0){rect(11,5,3,1,cream);rect(12,4,1,3,cream)}if(id%5===0){rect(10,16,5,2,accent);rect(11,17,3,1,light)}ctx.restore();}
