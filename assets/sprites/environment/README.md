@@ -1,1 +1,0 @@
-O terreno, as árvores, cercas, pontes, bancos, lanternas, mercados e elementos da praça são desenhados em Canvas por `js/world.js`, com formas voxel/oblíquas e paletas determinísticas por tile. Não dependem de imagens externas.

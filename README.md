@@ -1,35 +1,31 @@
-# Brumas de Âmbar
+# Nova Aurora — Sinal Morto
 
-RPG de captura para navegador, feito com HTML, CSS, Canvas e JavaScript modular. A vila e as regiões selvagens partilham um mapa contínuo, com perspetiva oblíqua 2D, edifícios voxel em SVG e personagens/ambiente desenhados em Canvas.
+Metroidvania cyberpunk original para navegador, construído com HTML, CSS, JavaScript modular e Canvas. O mundo é uma cidade contínua com cinco distritos e quinze áreas de mapa conectadas. Sprites, plataformas, cenário, efeitos e personagens são desenhados por código; não são carregadas imagens externas.
 
-## Executar no VS Code
+## Executar
 
-1. Abre esta pasta no VS Code.
-2. Na raiz do projeto, inicia um servidor estático local. Com **Live Server**, clica com o botão direito em `index.html` e escolhe **Open with Live Server**.
-3. Abre o endereço `http://...` no Chrome, Edge ou Firefox.
-
-O servidor é necessário porque os navegadores bloqueiam módulos JavaScript quando se abre a página diretamente por `file://`. Não há dependências nem compilação.
+Abre a pasta no VS Code e inicia `index.html` com a extensão **Live Server**. O jogo usa módulos JavaScript e `localStorage`; por isso, deve ser aberto num endereço HTTP local, não diretamente por `file://`. Não requer instalação de dependências.
 
 ## Controlos
 
-- **WASD / setas:** mover
-- **E / Enter:** falar, examinar ou recolher o achado secreto na Pradaria
-- **Tab:** mostrar ou esconder o menu do jogo
-- **J:** missões · **M:** mapa · **I:** mochila · **P:** equipa
-- **Esc:** fechar um painel ou abrir a pausa
+- **A/D** ou **←/→**: mover
+- **Espaço**: saltar; volta a pressionar no ar depois de obter Salto duplo
+- **J** ou **clique**: atacar
+- **K**: usar o implante contextual
+- **Shift**: Impulso cibernético, depois de desbloqueado
+- **E**: falar, ler terminais, ativar abrigos ou recolher itens
+- **M**: abrir o mapa; **Esc**: pausa
 
-Na vila, usa **E** junto a uma porta (ou atravessa-a) para entrar. Os interiores têm NPCs; procura também os baús nas casas, no armazém e na casa abandonada. Fala com a guardiã do **Centro de Vínculo** para recuperar a equipa. Usa os portões oeste, norte e leste para explorar a Pradaria, a Floresta e o Lago e Pedras. Encontros selvagens só começam quando caminhas pela relva alta dessas regiões.
+## O que está implementado
 
-## Recursos visuais
+- Movimento com aceleração, gravidade, tolerância de salto, buffer, salto duplo, plataformas e colisões com superfícies.
+- Combate em tempo real, combos, recuo, invulnerabilidade, energia, projéteis e inimigos com patrulha, perseguição, ataque e recuperação.
+- Cinco regiões interligadas, quinze áreas reveláveis, portões por habilidade, plataformas, perigos, terminais, itens secretos e abrigos.
+- Quatro chefes com avisos de ataque, duas fases e recompensas de progressão.
+- Impulso, salto duplo, gancho, pulso EMP, sobrecarga e filtro de contaminação com aplicações no mundo.
+- NPCs, uma melhoria de equipamento comprável, registos narrativos e missão de recolha.
+- Guardar em pontos de controlo e no menu, continuar, reaparecer e persistência de chefes, habilidades, itens, salas, missão e recursos.
 
-- As casas, o terreno, árvores, rochas, praça, cercas, portões e móveis exteriores são desenhados no Canvas por `js/world.js`, com contornos e detalhes em blocos de pixels.
-- Jogador e habitantes usam sprites 16×22 desenhados em Canvas. Cada monstro tem uma silhueta pixelada de 24×24 com detalhes elementares próprios em `js/monsters.js`; a escala é adaptada à exploração, à equipa e à batalha.
-- `assets/sprites/houses/village-houses.svg` permanece como folha original de referência dos modelos arquitetónicos; as casas do mapa são renderizadas em Canvas para manter escala e ordenação com o mundo.
+## Limites atuais
 
-## Sistemas preservados
-
-Captura, batalhas, experiência, evoluções, itens, equipa/caixa, enciclopédia, missões e `localStorage` continuam no motor. O renderizador ordena edifícios, objetos e personagens por profundidade; as colisões usam a planta dos edifícios e as células do mapa, independentemente da imagem do telhado. Cada edifício tem um interior próprio, com saída pela porta e conteúdo pesquisável persistente. Pedras pequenas agora são decorativas e transitáveis; apenas água, árvores, muralhas e edifícios bloqueiam a passagem.
-
-## Trabalho futuro
-
-A vila tem serviços funcionais, mas as casas sem NPC associado ainda são cenários. A história do Círculo do Véu não está completa, e os habitantes não têm rotinas de circulação. A referência visual não estava acessível como ficheiro neste projeto; os sprites foram construídos localmente a partir da descrição visual do pedido.
+Os recursos visuais são pixel art gerada em Canvas e ainda são blocos procedurais, não folhas PNG desenhadas à mão. As cinco regiões e o percurso principal são jogáveis; diálogos ramificados, áudio, animações quadro a quadro completas, inventário de armas e uma segunda escolha final ainda não foram desenvolvidos. O comportamento dos chefes está implementado, mas precisa de ajuste fino de dificuldade após teste visual em navegador.

@@ -2,38 +2,24 @@
 <html lang="pt-PT">
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#102b29"><title>Brumas de Âmbar</title>
-  <link rel="stylesheet" href="css/style.css"><link rel="stylesheet" href="css/interface.css">
+  <meta name="theme-color" content="#08111b"><title>Nova Aurora — Sinal Morto</title>
+  <link rel="stylesheet" href="css/style.css"><link rel="stylesheet" href="css/ui.css">
 </head>
 <body>
-  <main id="app">
-    <section id="title-screen" class="overlay title-screen">
-      <div class="title-card"><div class="sigil">✦</div><p class="eyebrow">UMA AVENTURA DE CAPTURA</p><h1>Brumas de<br><em>Âmbar</em></h1><p>Segue os ecos antigos por um mundo vivo.</p>
-        <label for="hero-name">Como te chamam?</label><input id="hero-name" maxlength="14" value="Navegante" autocomplete="off">
-        <p id="startup-error" class="startup-error" hidden></p>
-        <div class="button-row"><button id="new-game" class="primary">Novo jogo</button><button id="continue-game">Continuar</button></div>
-        <button id="settings-open" class="quiet">Configurações</button>
-      </div>
-    </section>
-    <section id="starter-screen" class="overlay hidden"><div class="dialog-card"><p class="eyebrow">O PRIMEIRO VÍNCULO</p><h2>Escolhe o teu companheiro</h2><p>A investigadora Lira espera por ti na sua casa em Lume.</p><div id="starter-options" class="starter-options"></div></div></section>
-    <div id="game-shell" class="hidden">
-      <header class="topbar"><div class="brand"><span>✦</span> BRUMAS DE ÂMBAR</div><div class="region-label"><span class="live-dot"></span><span id="region-name">Vale de Lume</span></div><div class="top-actions"><span id="money-label">◈ 120</span><button data-panel="quests">Missões <kbd>J</kbd></button><button data-panel="map">Mapa <kbd>M</kbd></button><button id="pause-button">Ⅱ</button></div></header>
-      <div class="game-layout"><section class="world-frame"><canvas id="world" width="960" height="600" aria-label="Mundo de jogo"></canvas><div class="hud"><div class="hero-chip"><div class="hero-avatar">✦</div><div><strong id="hero-label">Navegante</strong><small id="party-label">Equipa vazia</small></div></div><div id="toast" class="toast"></div><div class="world-hint">WASD / setas mover <span>·</span> E interagir <span>·</span> Tab menu</div></div></section>
-      <aside class="sidebar"><div class="side-heading"><div><span class="eyebrow">A TUA JORNADA</span><h2>Diário de campo</h2></div><span class="day-mark">01</span></div><div class="objective-card"><span class="mini-icon">✧</span><div><small>OBJETIVO ATUAL</small><strong id="objective-title">Conhece a investigadora</strong><p id="objective-text">Visita a casa de Lira a noroeste da praça.</p></div></div><div class="side-section"><div class="section-title"><span>Equipa</span><button data-panel="team">Ver equipa →</button></div><div id="party-list" class="party-list"></div></div><div class="side-section"><div class="section-title"><span>Descobertas</span><button data-panel="dex">Enciclopédia →</button></div><div class="discovery-row"><span>Registos</span><strong id="dex-count">0 / 22</strong></div><div class="progress-track"><i id="dex-progress"></i></div></div><div class="quick-actions"><button data-panel="inventory">▧ <span>Mochila</span><kbd>I</kbd></button><button data-panel="team">◉ <span>Equipa</span><kbd>P</kbd></button><button data-panel="save">⌑ <span>Guardar</span></button></div><div class="save-note">Progresso guardado automaticamente</div></aside></div>
-      <footer class="bottom-bar"><span><b>WASD</b> Mover</span><span><b>E</b> Falar / examinar</span><span><b>J</b> Missões</span><span><b>ESC</b> Pausa</span><span id="clock-label">VALE DE LUME · MANHÃ</span></footer>
+<main id="app">
+  <header class="topbar"><strong>NOVA <i>AURORA</i></strong><span id="area-label">SECTOR 09 · FAVELAS INFERIORES</span><button id="pause-open" aria-label="Pausar">Ⅱ</button></header>
+  <section class="stage"><canvas id="game" width="960" height="540" aria-label="Nova Aurora, jogo de plataformas"></canvas>
+    <div class="hud"><div class="status"><div class="portrait">K</div><div><strong>KAEL</strong><div class="bar"><i id="health-fill"></i></div><small id="health-text">100 / 100</small></div><div class="energy"><span>ENERGIA</span><div class="bar cyan"><i id="energy-fill"></i></div><small id="energy-text">100%</small></div><div class="credits"><span>CR</span><strong id="credits-label">40</strong></div></div>
+      <div class="objective" id="objective">Procura o abrigo da oficina · E para interagir</div><div class="toast" id="toast"></div>
+      <div class="boss-hud hidden" id="boss-hud"><span id="boss-name">CHEFE</span><div class="bar bossbar"><i id="boss-fill"></i></div></div>
     </div>
-    <section id="panel" class="overlay hidden"><div class="panel-card"><button id="panel-close" class="close">×</button><div id="panel-content"></div></div></section>
-    <section id="battle-screen" class="overlay hidden"><div class="battle-card"><div class="battle-top"><div><span class="eyebrow" id="battle-caption">ENCONTRO SELVAGEM</span><h2 id="battle-title">Uma criatura surgiu!</h2></div><button id="battle-run" class="quiet">Fugir</button></div><div class="battle-arena"><div class="combatant enemy"><div class="combat-info"><span id="enemy-level">Nv. 3</span><strong id="enemy-name">Brumim</strong><div class="hp-track"><i id="enemy-hp"></i></div><small id="enemy-hp-text">12 / 12</small></div><canvas id="enemy-sprite" width="144" height="128"></canvas></div><div class="battle-vs">✦</div><div class="combatant ally"><canvas id="ally-sprite" width="144" height="128"></canvas><div class="combat-info"><span id="ally-level">Nv. 3</span><strong id="ally-name">Folhito</strong><div class="hp-track"><i id="ally-hp"></i></div><small id="ally-hp-text">12 / 12</small></div></div></div><div id="battle-log" class="battle-log">O que deve fazer?</div><div id="battle-actions" class="battle-actions"></div></div></section>
-    <section id="dialog-screen" class="dialog-screen hidden"><div class="dialog-box"><div class="speaker-icon">✦</div><div><small id="dialog-speaker">Lira</small><p id="dialog-text"></p></div><button id="dialog-next">Continuar ↵</button></div></section>
-  </main>
-  <script>
-    function showModuleError(){
-      const box=document.getElementById('startup-error');
-      box.hidden=false;
-      box.textContent=location.protocol==='file:'
-        ? 'O navegador bloqueou os módulos ao abrir este ficheiro diretamente. Abre a pasta com Live Server no VS Code e atualiza a página.'
-        : 'O jogo não conseguiu carregar os módulos JavaScript. Atualiza a página; se o erro continuar, verifica a consola do navegador.';
-    }
-  </script>
-  <script type="module" src="js/main.js" onerror="showModuleError()"></script>
+    <div class="screen" id="title-screen"><div class="title-card"><p class="eyebrow">UM METROIDVANIA CYBERPUNK ORIGINAL</p><h1>NOVA<br><em>AURORA</em></h1><p class="subtitle">A cidade esqueceu quem a construiu.</p><label for="pilot-name">IDENTIFICAÇÃO</label><input id="pilot-name" maxlength="14" value="Kael"><div class="actions"><button id="new-game" class="primary">NOVA JORNADA</button><button id="continue-game">CONTINUAR</button></div><small>Setor 9 · Chuva ácida · 03:17</small></div></div>
+    <div class="screen hidden" id="pause-screen"><div class="panel"><p class="eyebrow">TERMINAL PESSOAL</p><h2 id="panel-title">PAUSADO</h2><nav><button data-tab="map">Mapa</button><button data-tab="abilities">Implantes</button><button data-tab="journal">Registos</button></nav><div id="panel-content"></div><div class="actions"><button id="save-button">GUARDAR</button><button id="resume-button" class="primary">VOLTAR AO JOGO</button></div></div></div>
+    <div class="screen hidden" id="dialog-screen"><div class="dialog"><strong id="speaker">TERMINAL</strong><p id="dialog-text"></p><button id="dialog-close">FECHAR · E</button></div></div>
+    <div class="screen hidden" id="death-screen"><div class="panel"><p class="eyebrow">SINAL PERDIDO</p><h2>O implante entrou em colapso</h2><p id="death-copy">Acordas no último abrigo ativo.</p><button id="respawn-button" class="primary">REINICIAR SINAL</button></div></div>
+    <div class="boss-warning hidden" id="boss-warning">SINAL DE AMEAÇA · ALVO IDENTIFICADO</div>
+  </section>
+  <footer class="controls"><span><b>A / D</b> mover</span><span><b>ESPAÇO</b> saltar</span><span><b>J / CLIQUE</b> atacar</span><span><b>K</b> implante</span><span><b>SHIFT</b> impulso</span><span><b>E</b> interagir</span><span><b>M</b> mapa</span><span><b>ESC</b> pausa</span></footer>
+</main>
+<script type="module" src="js/main.js"></script>
 </body></html>
