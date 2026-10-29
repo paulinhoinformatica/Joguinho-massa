@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="800" height="320" viewBox="0 0 800 320">
+  <defs>
+    <style>.roof{fill:var(--roof,#563a28)}.roof-side{fill:var(--roof-side,#39291e)}</style>
+    <filter id="soft-shadow" x="-30%" y="-30%" width="160%" height="180%"><feGaussianBlur stdDeviation="4"/></filter>
+    <symbol id="base-house" viewBox="0 0 160 160">
+      <ellipse cx="82" cy="143" rx="59" ry="11" fill="#17241b" opacity=".45" filter="url(#soft-shadow)"/>
+      <path d="M27 78 79 99v39l-52-20Z" fill="var(--front,#c2ad86)" stroke="#382b21" stroke-width="3"/>
+      <path d="m79 99 53-22v40l-53 21Z" fill="var(--side,#8a775c)" stroke="#382b21" stroke-width="3"/>
+      <path d="m25 75 55-23 54 23-55 25Z" fill="#82765f" stroke="#35291f" stroke-width="4"/>
+      <path d="m27 75 53 23v-5L32 70Z" fill="#9b8b6b"/>
+      <path d="M28 73 80 28l54 43-5 12-49-39-47 39Z" class="roof" stroke="#35271e" stroke-width="4"/>
+      <path d="m80 28 54 43-6 11-48-39Z" class="roof-side" stroke="#35271e" stroke-width="3"/>
+      <path d="m39 68 41-35 43 34-4 5-39-30-37 32Z" fill="#9d7045" opacity=".65"/>
+      <path d="M31 84 77 103v5L31 89Zm0 14 46 19v5l-46-19Zm52 5 43-18v5l-43 18Zm0 14 43-18v5l-43 18Z" fill="#483427" opacity=".82"/>
+      <path d="M35 76v43m8-46v46m38-16v37m-48-20h44m-42-15h43" stroke="#493526" stroke-width="3"/>
+      <path d="m91 94 33-14v33l-33 14Z" fill="#513c29" stroke="#30251d" stroke-width="3"/>
+      <path d="m96 97 23-10v20l-23 10Z" fill="#e6b969" stroke="#443122" stroke-width="3"/>
+      <path d="M38 84 56 92v18l-18-8Z" fill="#3d3025" stroke="#443122" stroke-width="4"/><path d="m42 87 11 5v12l-11-5Z" fill="#f0c975"/>
+      <path d="m99 63 18-8 12 10-18 8Z" fill="#3b2b20" stroke="#30251d" stroke-width="3"/><path d="m104 64 10-5 8 6-10 4Z" fill="#f5cd78"/>
+      <path d="m68 42 12-10 13 11-12 10Z" fill="#503a29" stroke="#30251d" stroke-width="3"/>
+      <path d="m38 75 41 17m-34-24 40 17m-29-27 39 16m2 4 38-16m-29 22 31-14" stroke="#d2ae73" stroke-width="2" opacity=".8"/>
+      <path d="m77 133 6 2v7l-6-2Z" fill="#35271e"/><circle cx="73" cy="118" r="2" fill="#e0bd77"/>
+      <path d="m20 116 7 3v10l-7-3Zm114-38 7-3v10l-7 3Z" fill="#59402b"/>
+    </symbol>
+    <symbol id="s0" viewBox="0 0 160 160"><use xlink:href="#base-house" style="--front:#c8b58e;--side:#8c7b60"/></symbol>
+    <symbol id="s1" viewBox="0 0 160 160"><use xlink:href="#base-house" style="--roof:#59402d;--roof-side:#39291f;--front:#bba27a;--side:#78654e"/><path d="m39 75 39 16v-6L43 69Zm0-8 37 15V58l-26-9Z" fill="#61452c" stroke="#34271e" stroke-width="3"/><path d="m47 60 17 7v11l-17-7Z" fill="#f1cb7b" stroke="#392b20" stroke-width="3"/></symbol>
+    <symbol id="s2" viewBox="0 0 160 160"><use xlink:href="#base-house" style="--roof:#493426;--roof-side:#34251d;--front:#c9b48c;--side:#887255"/><path d="m24 104 54 23v7l-54-23Zm5 7 4 2v15l-4-2Zm41 18 4 2v15l-4-2Zm-47-28v-5l9 4v6Z" fill="#68492e" stroke="#3c2b1e" stroke-width="2"/><path d="m26 98 50 21" stroke="#d2a762" stroke-width="3"/><path d="m99 92 26-11v6l-26 11Z" fill="#e0ba72"/></symbol>
+    <symbol id="s3" viewBox="0 0 160 160"><use xlink:href="#base-house" style="--roof:#48523c;--roof-side:#30392e;--front:#c1a87b;--side:#7d6b50"/><path d="m33 81 44 18v12L33 93Z" fill="#ad7047"/><path d="m28 80 53 22v5L28 85Z" fill="#e5c27d"/><path d="m31 85 7 3v9l-7-3Zm14 6 7 3v9l-7-3Zm14 6 7 3v9l-7-3Z" fill="#f2dfb4"/><path d="m104 48 24 11-3 7-24-11Z" fill="#725139"/><path d="m105 48 23 10" stroke="#f0d18e" stroke-width="2"/></symbol>
+    <symbol id="s4" viewBox="0 0 160 160"><use xlink:href="#base-house" style="--roof:#8b493c;--roof-side:#5d332b;--front:#d8c5a0;--side:#98856a"/><path d="m99 56 15-6 13 10-15 6Z" fill="#fff0cf" stroke="#573a2b" stroke-width="3"/><path d="m109 55 5-2 1 10-5 2Z" fill="#b7483b"/><path d="m106 56 13 5-1 4-13-5Z" fill="#b7483b"/><path d="m43 49 9-8 10 8-9 8Z" fill="#d5c49f" stroke="#4a3525" stroke-width="3"/></symbol>
+    <symbol id="s5" viewBox="0 0 160 160"><use xlink:href="#base-house" style="--roof:#465644;--roof-side:#303b31;--front:#c5b28a;--side:#81775e"/><path d="m57 44 23-20 24 20-6 7-18-15-18 15Z" fill="#3b4e3d" stroke="#30261e" stroke-width="3"/><path d="m65 43 14-12 15 12-3 4-12-9-11 10Z" fill="#c0a46d"/><path d="m98 70 10-5 10 8-10 5Z" fill="#ad8d57" stroke="#493524" stroke-width="2"/><path d="m103 71 5-3 5 4-5 3Z" fill="#f1d484"/></symbol>
+    <symbol id="s6" viewBox="0 0 160 160"><use xlink:href="#base-house" style="--roof:#394a3b;--roof-side:#28352d;--front:#c6ad83;--side:#75664e"/><path d="m23 86-5-2v31l8 3V88Zm112-15 7-3v37l-7 3Z" fill="#3b2a20"/><path d="m24 108 54 22v7l-54-22Zm57 22 51-21v7l-51 21Z" fill="#765333" stroke="#3b2a20" stroke-width="3"/><path d="m30 111 4 2v10l-4-2Zm43 18 4 2v9l-4-2Z" fill="#503923"/><path d="m98 63 18-8 12 10-18 8Z" fill="#3b2b20"/><path d="m103 64 10-5 8 6-10 4Z" fill="#f5c96d"/></symbol>
+    <symbol id="s7" viewBox="0 0 160 160"><use xlink:href="#base-house" style="--roof:#51402d;--roof-side:#36291f;--front:#a8875c;--side:#72583d"/><path d="m31 77 46 19v38l-46-19Z" fill="#845c37" stroke="#35271e" stroke-width="3"/><path d="m38 81 4 2v40l-4-2Zm11 5 4 2v40l-4-2Zm11 5 4 2v40l-4-2Zm11 5 4 2v40l-4-2Z" fill="#503a29"/><path d="m36 105 38 16v5l-38-16Z" fill="#d2ac6d"/></symbol>
+    <symbol id="s8" viewBox="0 0 160 160"><use xlink:href="#base-house" style="--roof:#515047;--roof-side:#38372f;--front:#b3a080;--side:#77705d"/><path d="m103 38 17-7v26l-17 7Z" fill="#756c59" stroke="#382c21" stroke-width="3"/><path d="m100 37 21-9v6l-21 9Z" fill="#b8aa8b"/><path d="m40 93 27 11v5l-27-11Z" fill="#8a6037"/><path d="m44 89 3 1v14l-3-1Zm17 7 3 1v14l-3-1Z" fill="#4a3322"/></symbol>
+    <symbol id="s9" viewBox="0 0 160 160"><use xlink:href="#base-house" style="--roof:#3f4739;--roof-side:#29332b;--front:#93876d;--side:#665f4d"/><path d="m29 73 8-6 5 5-8 8Zm32-25 8-7 6 6-8 7Zm30 8 6 4-4 6-7-4Z" fill="#68734b"/><path d="m36 98 9 4-3 14-9-5Zm64-2 7-4 3 8-7 4Z" fill="#554532"/><path d="m29 120 5-2m38-70 4-4m47 31 4 2" stroke="#30291f" stroke-width="3"/></symbol>
+  </defs>
+  <use xlink:href="#s0" x="0" y="0" width="160" height="160"/><use xlink:href="#s1" x="160" y="0" width="160" height="160"/><use xlink:href="#s2" x="320" y="0" width="160" height="160"/><use xlink:href="#s3" x="480" y="0" width="160" height="160"/><use xlink:href="#s4" x="640" y="0" width="160" height="160"/>
+  <use xlink:href="#s5" x="0" y="160" width="160" height="160"/><use xlink:href="#s6" x="160" y="160" width="160" height="160"/><use xlink:href="#s7" x="320" y="160" width="160" height="160"/><use xlink:href="#s8" x="480" y="160" width="160" height="160"/><use xlink:href="#s9" x="640" y="160" width="160" height="160"/>
+</svg>
