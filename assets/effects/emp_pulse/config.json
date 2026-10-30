@@ -1,0 +1,1 @@
+{"id":"emp_pulse","name":"Pulso eletromagnético","scale":1,"origin":{"x":64,"y":64},"visual":{"offsetX":0,"offsetY":0},"collision":{"width":1,"height":1,"offsetX":0,"offsetY":0},"animations":{"pulse":{"sheet":"assets/effects/emp_pulse/pulse.png","frameWidth":128,"frameHeight":128,"columns":8,"count":8,"fps":24,"loop":false,"events":[{"frame":7,"name":"end"}]}}}

@@ -1,6 +1,6 @@
 # Nova Aurora — Sinal Morto
 
-Metroidvania cyberpunk original para navegador, construído com HTML, CSS, JavaScript modular e Canvas. O mundo é uma cidade contínua com cinco distritos e quinze áreas de mapa conectadas. Sprites, plataformas, cenário, efeitos e personagens são desenhados por código; não são carregadas imagens externas.
+Metroidvania cyberpunk original para navegador, construído com HTML, CSS, JavaScript modular e Canvas. O mundo é uma cidade contínua com cinco distritos e quinze áreas de mapa conectadas. O motor carrega PNGs RGBA de um manifesto, anima spritesheets e quadros individuais, desenha fundos em paralaxe e mantém colisões em dados separados.
 
 ## Executar
 
@@ -18,7 +18,7 @@ Abre a pasta no VS Code e inicia `index.html` com a extensão **Live Server**. O
 
 ## O que está implementado
 
-- Movimento com aceleração, gravidade, tolerância de salto, buffer, salto duplo, plataformas e colisões com superfícies.
+- Movimento com aceleração, gravidade, tolerância de salto, buffer, salto duplo, plataformas e colisão lateral com estruturas sólidas.
 - Combate em tempo real, combos, recuo, invulnerabilidade, energia, projéteis e inimigos com patrulha, perseguição, ataque e recuperação.
 - Cinco regiões interligadas, quinze áreas reveláveis, portões por habilidade, plataformas, perigos, terminais, itens secretos e abrigos.
 - Quatro chefes com avisos de ataque, duas fases e recompensas de progressão.
@@ -26,6 +26,6 @@ Abre a pasta no VS Code e inicia `index.html` com a extensão **Live Server**. O
 - NPCs, uma melhoria de equipamento comprável, registos narrativos e missão de recolha.
 - Guardar em pontos de controlo e no menu, continuar, reaparecer e persistência de chefes, habilidades, itens, salas, missão e recursos.
 
-## Limites atuais
+## Estado visual e limites atuais
 
-Os recursos visuais são pixel art gerada em Canvas e ainda são blocos procedurais, não folhas PNG desenhadas à mão. As cinco regiões e o percurso principal são jogáveis; diálogos ramificados, áudio, animações quadro a quadro completas, inventário de armas e uma segunda escolha final ainda não foram desenvolvidos. O comportamento dos chefes está implementado, mas precisa de ajuste fino de dificuldade após teste visual em navegador.
+Os PNGs finais ainda não foram fornecidos. Personagens, inimigos, chefes, plataformas e fundos exibidos até à chegada dos PNGs são **fallbacks provisórios**, identificados no código. Consulta [assets/README.md](assets/README.md) para os formatos, nomes e o laboratório acessível com G. A pistola tem configuração de importação, mas ainda não está integrada no combate; o áudio permanece reservado.

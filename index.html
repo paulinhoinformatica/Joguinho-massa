@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#08111b"><title>Nova Aurora — Sinal Morto</title>
-  <link rel="stylesheet" href="css/style.css"><link rel="stylesheet" href="css/ui.css">
+  <link rel="stylesheet" href="css/style.css"><link rel="stylesheet" href="css/ui.css"><link rel="stylesheet" href="css/asset-lab.css">
 </head>
 <body>
 <main id="app">
@@ -18,8 +18,14 @@
     <div class="screen hidden" id="dialog-screen"><div class="dialog"><strong id="speaker">TERMINAL</strong><p id="dialog-text"></p><button id="dialog-close">FECHAR · E</button></div></div>
     <div class="screen hidden" id="death-screen"><div class="panel"><p class="eyebrow">SINAL PERDIDO</p><h2>O implante entrou em colapso</h2><p id="death-copy">Acordas no último abrigo ativo.</p><button id="respawn-button" class="primary">REINICIAR SINAL</button></div></div>
     <div class="boss-warning hidden" id="boss-warning">SINAL DE AMEAÇA · ALVO IDENTIFICADO</div>
+    <aside id="asset-lab" class="asset-lab hidden" aria-label="Laboratório de recursos gráficos">
+      <header><strong>LABORATÓRIO DE ASSETS</strong><button id="asset-lab-close" type="button">FECHAR · G</button></header>
+      <div class="asset-lab-controls"><label>Entidade <select id="asset-lab-entity"><option value="protagonist">Kael</option><option value="cyborg_soldier">Patrulheiro</option><option value="infected_drone">Drone</option><option value="infected_robot">Robô infetado</option></select></label><label>Animação <select id="asset-lab-animation"><option>idle</option></select></label><label>Escala <input id="asset-lab-scale" type="range" min="0.5" max="1.5" step="0.05" value="1"></label><button id="asset-lab-flip" type="button">Espelhar</button></div>
+      <canvas id="asset-lab-canvas" width="480" height="200" aria-label="Pré-visualização de sprite com linha do chão"></canvas>
+      <ul id="asset-lab-results"></ul><pre id="asset-lab-errors"></pre>
+    </aside>
   </section>
-  <footer class="controls"><span><b>A / D</b> mover</span><span><b>ESPAÇO</b> saltar</span><span><b>J / CLIQUE</b> atacar</span><span><b>K</b> implante</span><span><b>SHIFT</b> impulso</span><span><b>E</b> interagir</span><span><b>M</b> mapa</span><span><b>ESC</b> pausa</span></footer>
+  <footer class="controls"><span><b>A / D</b> mover</span><span><b>ESPAÇO</b> saltar</span><span><b>J / CLIQUE</b> atacar</span><span><b>K</b> implante</span><span><b>SHIFT</b> impulso</span><span><b>E</b> interagir</span><span><b>M</b> mapa</span><span><b>ESC</b> pausa</span><button id="asset-lab-button" type="button"><b>G</b> laboratório de assets</button></footer>
 </main>
 <script type="module" src="js/main.js"></script>
 </body></html>

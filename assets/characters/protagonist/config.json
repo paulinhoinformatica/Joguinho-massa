@@ -1,0 +1,23 @@
+{
+  "id": "protagonist",
+  "name": "Kael",
+  "scale": 1,
+  "origin": { "x": 64, "y": 128 },
+  "visual": { "offsetX": 0, "offsetY": 0 },
+  "collision": { "width": 30, "height": 54, "offsetX": 0, "offsetY": 0 },
+  "facing": 1,
+  "animations": {
+    "idle": { "sheet": "assets/characters/protagonist/kael/spritesheets/idle_provisorio.png", "frameWidth": 64, "frameHeight": 64, "columns": 4, "count": 4, "fps": 6, "loop": true },
+    "walk": { "sheet": "assets/characters/protagonist/walk.png", "frameWidth": 128, "frameHeight": 128, "columns": 8, "count": 8, "fps": 10, "loop": true },
+    "run": { "sheet": "assets/characters/protagonist/run.png", "frameWidth": 128, "frameHeight": 128, "columns": 8, "count": 8, "fps": 12, "loop": true },
+    "jump": { "frames": ["assets/characters/protagonist/jump_01.png", "assets/characters/protagonist/jump_02.png"], "frameWidth": 128, "frameHeight": 128, "fps": 9, "loop": false, "freezeLast": true },
+    "fall": { "sheet": "assets/characters/protagonist/fall.png", "frameWidth": 128, "frameHeight": 128, "columns": 4, "count": 4, "fps": 6, "loop": true },
+    "landing": { "sheet": "assets/characters/protagonist/landing.png", "frameWidth": 128, "frameHeight": 128, "columns": 4, "count": 4, "fps": 14, "loop": false, "events": [{ "frame": 2, "name": "land" }] },
+    "melee": { "sheet": "assets/characters/protagonist/attack_melee.png", "frameWidth": 160, "frameHeight": 128, "columns": 6, "count": 6, "fps": 15, "loop": false, "freezeLast": false, "events": [{ "frame": 2, "name": "hit" }] },
+    "ranged": { "sheet": "assets/characters/protagonist/attack_ranged.png", "frameWidth": 160, "frameHeight": 128, "columns": 5, "count": 5, "fps": 14, "loop": false, "events": [{ "frame": 3, "name": "fire" }] },
+    "dodge": { "sheet": "assets/characters/protagonist/dodge.png", "frameWidth": 160, "frameHeight": 128, "columns": 6, "count": 6, "fps": 18, "loop": false },
+    "special": { "sheet": "assets/characters/protagonist/special.png", "frameWidth": 160, "frameHeight": 128, "columns": 6, "count": 6, "fps": 12, "loop": false, "events": [{ "frame": 3, "name": "activate" }] },
+    "damage": { "sheet": "assets/characters/protagonist/damage.png", "frameWidth": 128, "frameHeight": 128, "columns": 3, "count": 3, "fps": 12, "loop": false },
+    "death": { "sheet": "assets/characters/protagonist/death.png", "frameWidth": 160, "frameHeight": 128, "columns": 7, "count": 7, "fps": 8, "loop": false }
+  }
+}

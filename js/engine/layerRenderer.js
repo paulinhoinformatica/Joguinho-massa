@@ -1,0 +1,5 @@
+export class LayerRenderer{
+ constructor(assets){this.assets=assets}
+ draw(ctx,layers,camera,viewport){for(const layer of [...layers].sort((a,b)=>(a.depth||0)-(b.depth||0))){const image=this.assets.get(layer.src);if(!image)continue;const factor=layer.parallax??1,scale=layer.scale??1,w=layer.width||image.naturalWidth*scale,h=layer.height||image.naturalHeight*scale,y=(layer.y||0)-camera.y*(layer.parallaxY??factor);let x=(layer.x||0)-camera.x*factor;if(layer.repeatX){while(x>0)x-=w;for(;x<viewport.width;x+=w)ctx.drawImage(image,x,y,w,h)}else ctx.drawImage(image,x,y,w,h)}}
+ drawObjects(ctx,objects,camera,viewport=null){for(const obj of [...objects].sort((a,b)=>(a.depth||0)-(b.depth||0))){const image=this.assets.get(obj.src);if(!image)continue;const w=obj.width||image.naturalWidth,h=obj.height||image.naturalHeight;if(viewport&&(obj.x+w<viewport.x||obj.x>viewport.x+viewport.width||obj.y+h<viewport.y||obj.y>viewport.y+viewport.height))continue;ctx.drawImage(image,obj.x-camera.x,obj.y-camera.y,w,h)}}
+}

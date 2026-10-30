@@ -23,4 +23,5 @@ export function buildMap(){const platforms=[],hazards=[],checkpoints=[],terminal
   if(r.id==='sewers')terminals.push({x:x+2280,y:GROUND-44,id:'gate-corporate',name:'Elevador blindado',text:'O mecanismo responde ao Salto duplo.'});
   if(r.id==='corporate')terminals.push({x:x+2280,y:GROUND-44,id:'gate-core',name:'Câmara do reator',text:'A fechadura exige Sobrecarga. O Pulso eletromagnético bloqueia as torres.'});
  }
- return{platforms,hazards,checkpoints,terminals,secrets,npcs,hookPoints}}
+ // visualObjects are independent of platform collision coordinates; external PNGs may be placed here by level data.
+ return{platforms,hazards,checkpoints,terminals,secrets,npcs,hookPoints,visuals:[]}}
