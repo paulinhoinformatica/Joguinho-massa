@@ -1,0 +1,46 @@
+PASS idle PNG carregado
+PASS walk ausente identificado
+PASS idle direção 1
+PASS idle direção -1
+PASS walk direção 1
+PASS walk direção -1
+PASS run direção 1
+PASS run direção -1
+PASS jump direção 1
+PASS jump direção -1
+PASS fall direção 1
+PASS fall direção -1
+PASS landing direção 1
+PASS landing direção -1
+PASS attack direção 1
+PASS attack direção -1
+PASS dash direção 1
+PASS dash direção -1
+PASS special direção 1
+PASS special direção -1
+PASS damage direção 1
+PASS damage direção -1
+PASS death direção 1
+PASS death direção -1
+PASS mapeamento attack e dash
+PASS eventos quadro zero, repetidos e loop
+PASS hit único e último quadro
+PASS dimensões reais sem presumir 64 ou 128
+PASS spritesheet multilinha
+PASS grade inválida rejeitada
+PASS hitbox cajado simétrica
+PASS aguarda evento hit
+PASS dano de combo preservado
+PASS sem dano duplicado
+PASS espelhamento em torno dos pés
+PASS fallback procedural desativado
+PASS cache evita carregar PNG duplicado
+PASS repouso físico
+PASS repouso para caminhada
+PASS caminhada para corrida
+PASS salto físico
+PASS queda física
+PASS pés no chão após pouso
+PASS esquiva física
+PASS jogo real inicia e atualiza no navegador
+ALL PASS

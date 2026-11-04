@@ -1,0 +1,43 @@
+<!doctype html><meta charset="utf-8"><base href="/"><pre id="results">RUNNING</pre><canvas id="c"></canvas><script type="module">
+import {AssetManager} from './js/engine/assetManager.js';
+import {AnimationManager} from './js/engine/animationManager.js';
+import {SpriteRenderer} from './js/engine/spriteRenderer.js';
+import {createPlayer,updatePlayer,attackBox} from './js/player.js';
+import {playerDamage} from './js/combat.js';
+import {Engine,newState} from './js/engine.js';
+import {ASSET_MANIFEST} from './js/config/assets.js';
+const results=[];function check(name,value){if(!value)throw Error(name);results.push('PASS '+name)}
+try{
+const assets=new AssetManager(ASSET_MANIFEST);await assets.loadEntity('protagonist');const am=new AnimationManager(),r=new SpriteRenderer(assets,am),ctx=document.querySelector('canvas').getContext('2d'),cfg=assets.getConfig('protagonist');
+check('idle PNG carregado',r.available('protagonist','idle'));
+check('walk ausente identificado',!r.available('protagonist','walk')&&assets.status().failed>0);
+for(const state of ['idle','walk','run','jump','fall','landing','attack','dash','special','damage','death'])for(const facing of [1,-1])check(state+' direção '+facing,r.draw(ctx,'protagonist',state,{x:50,y:90,facing},.03));
+check('mapeamento attack e dash',r.resolve('protagonist','attack').requested==='melee'&&r.resolve('protagonist','dash').requested==='dodge');
+const events=[],target={},def={count:3,fps:10,loop:true,events:[{frame:0,name:'land'},{frame:1,name:'hit'},{frame:2,name:'hit'}]};
+am.play(target,'a',def,.61,n=>events.push(n));check('eventos quadro zero, repetidos e loop',events.join(',')==='land,hit,hit,land,hit,hit,land');
+const once={},onceEvents=[],attack={count:4,fps:10,loop:false,events:[{frame:2,name:'hit'}]};am.play(once,'attack',attack,1,n=>onceEvents.push(n));am.play(once,'attack',attack,1,n=>onceEvents.push(n));check('hit único e último quadro',onceEvents.length===1&&am.play(once,'attack',attack,0).index===3);
+const sheet={sheet:'test',columns:8,rows:1,count:8,displayHeight:64};assets.records.set('test',{status:'ready',image:{naturalWidth:2400,naturalHeight:300}});assets.prepareAnimation('test','walk',sheet);check('dimensões reais sem presumir 64 ou 128',sheet.frameWidth===300&&sheet.frameHeight===300&&sheet.scale===64/300);
+const multi={sheet:'multi',columns:4,rows:2,count:8};assets.records.set('multi',{status:'ready',image:{naturalWidth:400,naturalHeight:160}});assets.prepareAnimation('test','multi',multi);check('spritesheet multilinha',multi.frameWidth===100&&multi.frameHeight===80);
+const bad={sheet:'test',columns:7,rows:1,count:8};assets.prepareAnimation('test','bad',bad);check('grade inválida rejeitada',bad.invalid);
+const p=createPlayer();p.x=100;p.y=100;p.facing=1;const right=attackBox(p);p.facing=-1;const left=attackBox(p);check('hitbox cajado simétrica',right.w===70&&left.w===70&&right.x===130&&left.x===30&&p.w===30&&p.h===54);
+p.facing=1;p.combo=1;p.attackTimer=.3;p.attackBox=right;p.externalAttackAnimation=true;p.attackFrameReady=false;const enemy={x:140,y:110,w:20,h:30,health:100};check('aguarda evento hit',!playerDamage(p,enemy));p.attackFrameReady=true;check('dano de combo preservado',playerDamage(p,enemy)&&enemy.health===78);check('sem dano duplicado',!playerDamage(p,enemy)&&enemy.health===78);
+const calls=[],fake={save(){},restore(){},translate(...v){calls.push(['translate',...v])},scale(...v){calls.push(['scale',...v])},drawImage(...v){calls.push(['draw',...v.slice(1)])}};
+r.draw(fake,'protagonist','idle',{x:50,y:90,facing:-1},0);check('espelhamento em torno dos pés',calls[0][1]===50&&calls[0][2]===90&&calls[1][1]===-1&&calls[2][5]===-32&&calls[2][6]===-64&&fake.imageSmoothingEnabled===false);
+check('fallback procedural desativado',cfg.fallback.procedural===false);
+const original=assets.image;let count=0;const oldImage=window.Image;window.Image=class{set src(v){count++;queueMicrotask(()=>this.onload())}};await Promise.all([assets.image('cache.png'),assets.image('cache.png')]);window.Image=oldImage;check('cache evita carregar PNG duplicado',count===1);
+const moving=createPlayer();moving.x=100;moving.y=736;moving.grounded=true;
+const input={platforms:[{x:0,y:790,w:1000,h:100}],right:false,left:false},abilities={dash:true};
+updatePlayer(moving,input,.016,abilities);check('repouso físico',moving.state==='idle');
+input.right=true;updatePlayer(moving,input,.03,abilities);check('repouso para caminhada',moving.state==='walk');
+for(let i=0;i<5;i++)updatePlayer(moving,input,.03,abilities);check('caminhada para corrida',moving.state==='run');
+input.right=false;input.jump=true;updatePlayer(moving,input,.03,abilities);check('salto físico',moving.state==='jump');
+input.jump=false;for(let i=0;i<16;i++)updatePlayer(moving,input,.03,abilities);check('queda física',moving.state==='fall');
+for(let i=0;i<40;i++)updatePlayer(moving,input,.03,abilities);check('pés no chão após pouso',moving.grounded&&moving.y+moving.h===790);
+input.dash=true;updatePlayer(moving,input,.03,abilities);check('esquiva física',moving.state==='dash');
+const iframe=document.createElement('iframe');const loaded=new Promise(resolve=>iframe.onload=resolve);iframe.src='/index.html';document.body.append(iframe);await loaded;
+const browserErrors=[];iframe.contentWindow.addEventListener('error',e=>browserErrors.push(e.message));iframe.contentWindow.addEventListener('unhandledrejection',e=>browserErrors.push(String(e.reason)));
+await new Promise(resolve=>setTimeout(resolve,200));iframe.contentDocument.querySelector('#new-game').click();await new Promise(resolve=>setTimeout(resolve,600));
+for(const type of ['keydown','keyup'])iframe.contentWindow.dispatchEvent(new iframe.contentWindow.KeyboardEvent(type,{key:'d'}));
+await new Promise(resolve=>setTimeout(resolve,300));check('jogo real inicia e atualiza no navegador',iframe.contentDocument.querySelector('#title-screen').classList.contains('hidden')&&browserErrors.length===0);
+document.querySelector('#results').textContent=results.join('\n')+'\nALL PASS';
+}catch(e){document.querySelector('#results').textContent=results.join('\n')+'\nFAIL '+e.stack}</script>
