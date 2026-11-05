@@ -2,6 +2,7 @@ export const ASSET_MANIFEST={
  // Planned backgrounds remain registered; enable once their PNGs are installed.
  loadBackgrounds:false,
  entities:{
+  implanted_infected:{category:"enemies",name:"Implantado Infectado",config:"assets/characters/enemies/infected/config.json",regions:["slums"]},
   protagonist:{category:'characters',name:'Kael',config:'assets/characters/protagonist/config.json',regions:['slums','industrial','corporate','virus_core']},
   cyborg_soldier:{category:'enemies',name:'Patrulheiro cibernético',config:'assets/enemies/cyborg_soldier/config.json',regions:['slums','industrial','corporate','virus_core']},
   infected_drone:{category:'enemies',name:'Drone infetado',config:'assets/enemies/infected_drone/config.json',regions:['slums','industrial','corporate','virus_core']},

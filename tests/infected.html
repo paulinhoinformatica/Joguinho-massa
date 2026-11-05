@@ -1,0 +1,96 @@
+<!doctype html><meta charset="utf-8"><pre id="results">RUNNING</pre><canvas width="420" height="160"></canvas><script type="module">
+import {spawnEnemies,updateEnemies,renderEnemy} from '../js/enemies.js';
+import {enemyAttackBox,updateSector9Enemy} from '../js/sector9-enemies.js';
+import {enemyHurtbox,playerDamage} from '../js/combat.js';
+import {AssetManager} from '../js/engine/assetManager.js';
+import {AnimationManager} from '../js/engine/animationManager.js';
+import {SpriteRenderer} from '../js/engine/spriteRenderer.js';
+import {ASSET_MANIFEST} from '../js/config/assets.js';
+import {drawCombatDebug} from '../js/combat-debug.js';
+const results=[],check=(s,b)=>{if(!b)throw Error(s);results.push('PASS '+s)};
+try {
+// Absolute asset paths are relative to the project, including when served over HTTP.
+const base=document.createElement('base');base.href=new URL('../',location.href);document.head.append(base);
+const assets=new AssetManager(ASSET_MANIFEST);await assets.loadEntity('implanted_infected');
+const am=new AnimationManager(),renderer=new SpriteRenderer(assets,am),cfg=assets.getConfig('implanted_infected');
+check('idle/walk carregados sem erros',assets.status().failed===0&&renderer.available('implanted_infected','idle')&&renderer.available('implanted_infected','walk'));
+check('dimensoes reais',assets.get(cfg.animations.idle.sheet).naturalWidth===128&&assets.get(cfg.animations.walk.sheet).naturalWidth===512);
+const t={},frames=[];for(let i=0;i<5;i++)frames.push(am.play(t,'walk',cfg.animations.walk,i?1/6:0).index);
+check('quatro quadros e loop',frames.join()==='0,1,2,3,0');
+const floor={map:{platforms:[{x:0,y:790,w:2000,h:100}]}};
+const make=()=>({...spawnEnemies()[0],x:800,homeX:800,y:734,grounded:true,attackCooldown:0});
+const immune=make(),protectedPlayer={x:immune.x+immune.w,y:736,w:30,h:54,health:100,invuln:.5};
+immune.dashPhase='dash';immune.dashTimer=.2;immune.dashFacing=1;updateSector9Enemy(immune,protectedPlayer,1/60,floor);
+check('invulnerabilidade de Kael',protectedPlayer.health===100);
+const roof=make();roof.y=600;roof.vy=100;roof.grounded=false;roof.hurtTimer=1;
+for(let i=0;i<30;i++)updateSector9Enemy(roof,protectedPlayer,1/60,{map:{platforms:[{x:700,y:700,w:400,h:20}]}});
+check('pousa em plataforma',roof.y+roof.h===700);
+const killed=make();killed.health=1;playerDamage({state:'attack',attackTimer:.2,combo:0,attackBox:enemyHurtbox(killed),facing:1},killed);
+check('morte por cajado',killed.dead&&killed.deathTimer===.75&&!enemyAttackBox(killed));
+killed.respawn=.01;updateEnemies([killed],protectedPlayer,.02,floor);
+check('respawn existente limpo',!killed.dead&&!killed.dashPhase&&killed.health===killed.maxHealth);
+for(const fps of [30,60,120])for(const facing of [-1,1]){
+ const e=make(),p={x:facing>0?845:745,y:736,w:30,h:54,health:100,invuln:0};
+ e.facing=facing;updateSector9Enemy(e,p,1/fps,floor);
+ check('aviso sem dano '+fps+'/'+facing,e.dashPhase==='windup'&&!enemyAttackBox(e)&&p.health===100);
+ p.x=facing>0?e.x-200:e.x+200;updateSector9Enemy(e,p,1/fps,floor);check('acompanha Kael na preparacao',e.facing===-facing);
+ while(e.dashPhase==='windup')updateSector9Enemy(e,p,1/fps,floor);
+ const locked=e.dashFacing;check('trava no final da preparacao',locked===-facing);
+ const offensive=enemyAttackBox(e);check('hitbox frontal',locked>0?offensive.x===e.x+e.w-4:offensive.x===e.x-12);
+ p.x=locked>0?e.x-100:e.x+100;updateSector9Enemy(e,p,1/fps,floor);
+ check('nao vira durante investida',e.facing===locked&&e.dashFacing===locked);
+ let hitCount=0;for(let i=0;i<fps*1.4;i++){
+  p.x=e.dashFacing>0?e.x+e.w:e.x-p.w;p.invuln=0;
+  const hp=p.health;updateSector9Enemy(e,p,1/fps,floor);if(p.health<hp)hitCount++;
+ }
+ check('dano unico e hitbox encerrada '+fps+'/'+facing,hitCount===1&&!enemyAttackBox(e));
+ p.x=e.x+(locked>0?-100:100);updateSector9Enemy(e,p,1/fps,floor);check('volta a olhar Kael apos recuperar',e.facing===-locked);
+ check('pes no chao',e.y+e.h===790);
+ const h=enemyHurtbox(e);check('hurtbox do corpo',h.w===32&&h.h===54&&e.w===28&&e.h===56);
+ const attacker={state:'attack',attackTimer:.2,combo:1,attackBox:h,facing:1};
+ check('cajado causa dano',playerDamage(attacker,e)&&e.health===20);
+ updateSector9Enemy(e,p,1/fps,floor);check('dano interrompe ataque',!enemyAttackBox(e)&&!e.dashPhase);
+ e.dead=true;e.dashPhase='dash';check('morto sem hitbox',!enemyAttackBox(e));
+}
+const wall=make();wall.dashPhase='dash';wall.dashTimer=.2;wall.dashFacing=1;
+const world={map:{platforms:[...floor.map.platforms,{x:850,y:650,w:60,h:140}]}};
+for(let i=0;i<15;i++)updateSector9Enemy(wall,{x:1000,y:736,w:30,h:54},1/60,world);
+check('parede bloqueia investida',wall.x+wall.w<=850);
+const edge=make();edge.x=850;edge.homeX=850;edge.dashPhase='dash';edge.dashTimer=.2;edge.dashFacing=1;
+for(let i=0;i<15;i++)updateSector9Enemy(edge,{x:1000,y:736,w:30,h:54},1/60,{map:{platforms:[{x:0,y:790,w:900,h:100}]}});
+check('respeita borda',edge.x+edge.w<=900&&edge.y+edge.h===790);
+const calls=[],ctx={save(){},restore(){},translate(){},scale(x){calls.push(x)},drawImage(...a){calls.push(a)},fillRect(){}};
+const visual=make();for(const facing of [-1,1])for(const anim of ['idle','walk']){visual.facing=facing;renderer.draw(ctx,'implanted_infected',anim,visual,0,{x:814,y:790})}
+check('espelhamento e pixel art',calls.includes(-1)&&ctx.imageSmoothingEnabled===false);
+const draws=calls.filter(Array.isArray);check('escala e pes iguais',draws.every(a=>a[7]===64&&a[8]===64&&a[6]===730));
+for(const anim of ['idle','walk'])for(const facing of [-1,1]){
+ const operations=[],probe={save(){},restore(){},translate(...v){operations.push(['translate',...v])},scale(...v){operations.push(['scale',...v])},drawImage(...v){operations.push(['draw',...v.slice(1)])}};
+ const actor=make(),before={x:actor.x,y:actor.y,w:actor.w,h:actor.h};actor.facing=facing;
+ renderer.draw(probe,'implanted_infected',anim,actor,0,{x:actor.x+actor.w/2,y:actor.y+actor.h});
+ const flips=operations.filter(v=>v[0]==='scale');
+ check(anim+' orientacao nativa esquerda '+facing,facing<0?flips.length===0:flips.length===1&&flips[0][1]===-1&&flips[0][2]===1);
+ const draw=operations.find(v=>v[0]==='draw');
+ check(anim+' ancora e tamanho '+facing,draw[5]===782&&draw[6]===730&&draw[7]===64&&draw[8]===64);
+ check('espelhamento preserva colisor e hurtbox',actor.x===before.x&&actor.y===before.y&&actor.w===before.w&&actor.h===before.h&&enemyHurtbox(actor).x===actor.x-2);
+ if(facing>0)check('espelha em torno do centro',operations.find(v=>v[0]==='translate')[1]===1628);
+}
+const patroller=make(),far={x:1800,y:736,w:30,h:54};patroller.x=925;patroller.facing=1;
+updateSector9Enemy(patroller,far,1/60,floor);check('patrulha vira no limite',patroller.facing===-1&&patroller.vx<0);
+patroller.attackCooldown=2;const crossing={...far,x:patroller.x+100};updateSector9Enemy(patroller,crossing,1/60,floor);check('persegue direita',patroller.facing===1&&patroller.vx>0);
+crossing.x=patroller.x-100;updateSector9Enemy(patroller,crossing,1/60,floor);check('persegue esquerda apos cruzar',patroller.facing===-1&&patroller.vx<0);
+for(const facing of [-1,1]){
+ const actor=make();actor.facing=actor.dashFacing=facing;actor.dashPhase='dash';actor.vx=440*facing;
+ const boxes=[],debug=new Proxy({strokeRect(...b){boxes.push(b)}},{get(o,k){return k in o?o[k]:()=>{}}});
+ drawCombatDebug(debug,{player:{dead:true},bosses:[]},[actor],{x:0,y:0});
+ const expected=[actor,enemyHurtbox(actor),enemyAttackBox(actor)];
+ check('F3 desenha colisor hurtbox ataque '+facing,expected.every(b=>boxes.some(r=>r.join()===[b.x,b.y,b.w,b.h].join())));
+ const old={x:actor.x,y:actor.y};const canvas=document.querySelector('canvas').getContext('2d');
+ renderEnemy(canvas,actor,{x:0,y:0},renderer);actor.dashPhase=null;actor.vx=0;renderEnemy(canvas,actor,{x:0,y:0},renderer);
+ check('retorno idle sem deslocamento '+facing,actor.x===old.x&&actor.y===old.y);
+}
+const c=document.querySelector('canvas').getContext('2d');const v=make();v.x=100;v.y=40;v.vx=0;renderEnemy(c,v,{x:0,y:0},renderer);v.x=220;v.vx=54;renderEnemy(c,v,{x:0,y:0},renderer,.4);
+assets.records.get(cfg.animations.idle.sheet).status='error';check('walk continua disponivel sem idle',renderer.available('implanted_infected','walk'));renderEnemy(c,v,{x:0,y:0},renderer);
+assets.records.get(cfg.animations.walk.sheet).status='error';renderEnemy(c,v,{x:0,y:0},renderer);check('fallback procedural sem PNG',true);
+document.querySelector('#results').textContent=results.join('\n')+'\nALL PASS';
+}catch(e){document.querySelector('#results').textContent=results.join('\n')+'\nFAIL '+e.stack}
+</script>

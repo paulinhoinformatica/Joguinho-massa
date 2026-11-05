@@ -29,7 +29,7 @@ try{
   for(const actor of e.enemies){actor.y=790-actor.h;actor.state='attack';actor.attackTimer=.1;actor.meleeFacing=actor.facing=actor.type==='patrol'?1:-1}
   e.state.player.x=930;e.state.player.y=736;e.camera.x=600;e.camera.y=360;e.render(false);
   if(e.assets.status().failed)throw Error('missing asset requests');
-  if(patrol.w!==34||patrol.h!==58||robot.w!==38||robot.h!==60)throw Error('collision config regression');
+  if(patrol.w!==28||patrol.h!==56||robot.w!==38||robot.h!==60)throw Error('collision config regression');
   const blue=()=>{const pixels=e.ctx.getImageData(0,0,e.canvas.width,e.canvas.height).data;let n=0;for(let i=0;i<pixels.length;i+=4)if(pixels[i]<130&&pixels[i+1]>100&&pixels[i+1]<190&&pixels[i+2]>220)n++;return n};
   window.debugBlue=blue;window.debugOnPixels=blue();
   return {enemyTypes:e.enemies.map(e=>e.type),debugEnabled:e.debugCombat,bluePixels:debugOnPixels};

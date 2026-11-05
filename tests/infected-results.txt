@@ -1,0 +1,107 @@
+PASS idle/walk carregados sem erros
+PASS dimensoes reais
+PASS quatro quadros e loop
+PASS invulnerabilidade de Kael
+PASS pousa em plataforma
+PASS morte por cajado
+PASS respawn existente limpo
+PASS aviso sem dano 30/-1
+PASS acompanha Kael na preparacao
+PASS trava no final da preparacao
+PASS hitbox frontal
+PASS nao vira durante investida
+PASS dano unico e hitbox encerrada 30/-1
+PASS volta a olhar Kael apos recuperar
+PASS pes no chao
+PASS hurtbox do corpo
+PASS cajado causa dano
+PASS dano interrompe ataque
+PASS morto sem hitbox
+PASS aviso sem dano 30/1
+PASS acompanha Kael na preparacao
+PASS trava no final da preparacao
+PASS hitbox frontal
+PASS nao vira durante investida
+PASS dano unico e hitbox encerrada 30/1
+PASS volta a olhar Kael apos recuperar
+PASS pes no chao
+PASS hurtbox do corpo
+PASS cajado causa dano
+PASS dano interrompe ataque
+PASS morto sem hitbox
+PASS aviso sem dano 60/-1
+PASS acompanha Kael na preparacao
+PASS trava no final da preparacao
+PASS hitbox frontal
+PASS nao vira durante investida
+PASS dano unico e hitbox encerrada 60/-1
+PASS volta a olhar Kael apos recuperar
+PASS pes no chao
+PASS hurtbox do corpo
+PASS cajado causa dano
+PASS dano interrompe ataque
+PASS morto sem hitbox
+PASS aviso sem dano 60/1
+PASS acompanha Kael na preparacao
+PASS trava no final da preparacao
+PASS hitbox frontal
+PASS nao vira durante investida
+PASS dano unico e hitbox encerrada 60/1
+PASS volta a olhar Kael apos recuperar
+PASS pes no chao
+PASS hurtbox do corpo
+PASS cajado causa dano
+PASS dano interrompe ataque
+PASS morto sem hitbox
+PASS aviso sem dano 120/-1
+PASS acompanha Kael na preparacao
+PASS trava no final da preparacao
+PASS hitbox frontal
+PASS nao vira durante investida
+PASS dano unico e hitbox encerrada 120/-1
+PASS volta a olhar Kael apos recuperar
+PASS pes no chao
+PASS hurtbox do corpo
+PASS cajado causa dano
+PASS dano interrompe ataque
+PASS morto sem hitbox
+PASS aviso sem dano 120/1
+PASS acompanha Kael na preparacao
+PASS trava no final da preparacao
+PASS hitbox frontal
+PASS nao vira durante investida
+PASS dano unico e hitbox encerrada 120/1
+PASS volta a olhar Kael apos recuperar
+PASS pes no chao
+PASS hurtbox do corpo
+PASS cajado causa dano
+PASS dano interrompe ataque
+PASS morto sem hitbox
+PASS parede bloqueia investida
+PASS respeita borda
+PASS espelhamento e pixel art
+PASS escala e pes iguais
+PASS idle orientacao nativa esquerda -1
+PASS idle ancora e tamanho -1
+PASS espelhamento preserva colisor e hurtbox
+PASS idle orientacao nativa esquerda 1
+PASS idle ancora e tamanho 1
+PASS espelhamento preserva colisor e hurtbox
+PASS espelha em torno do centro
+PASS walk orientacao nativa esquerda -1
+PASS walk ancora e tamanho -1
+PASS espelhamento preserva colisor e hurtbox
+PASS walk orientacao nativa esquerda 1
+PASS walk ancora e tamanho 1
+PASS espelhamento preserva colisor e hurtbox
+PASS espelha em torno do centro
+PASS patrulha vira no limite
+PASS persegue direita
+PASS persegue esquerda apos cruzar
+PASS F3 desenha colisor hurtbox ataque -1
+PASS retorno idle sem deslocamento -1
+PASS F3 desenha colisor hurtbox ataque 1
+PASS retorno idle sem deslocamento 1
+PASS walk continua disponivel sem idle
+PASS fallback procedural sem PNG
+ALL PASS

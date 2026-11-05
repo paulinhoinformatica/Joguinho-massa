@@ -15,7 +15,7 @@ assert.deepEqual(spawnEnemies().filter(e=>e.room===0).map(e=>e.type),['patrol','
 assert.equal(Object.values(MATRONA_TIMING).reduce((a,b)=>a+b,0),2);
 for(const fps of [30,60,120]){
  const dt=1/fps;
- for(const type of ['patrol','maintenance'])for(const facing of [-1,1]){
+ for(const type of ['maintenance'])for(const facing of [-1,1]){
   const e=spawnEnemies().find(e=>e.room===0&&e.type===type);e.x=1000;e.y=GROUND-e.h;e.facing=facing;e.attackCooldown=0;
   const p=createPlayer();p.x=facing>0?e.x+e.w+12:e.x-p.w-12;p.y=GROUND-p.h;
   const hp=p.health;
