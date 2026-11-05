@@ -1,0 +1,76 @@
+import {writeFileSync} from 'node:fs';
+const tabs=await(await fetch('http://127.0.0.1:9222/json/list')).json();
+const ws=new WebSocket(tabs.find(t=>t.type==='page').webSocketDebuggerUrl);
+await new Promise(resolve=>ws.addEventListener('open',resolve,{once:true}));
+let serial=0;const pending=new Map(),errors=[];
+ws.addEventListener('message',e=>{const m=JSON.parse(e.data);if(m.method==='Runtime.exceptionThrown')errors.push(m.params.exceptionDetails.text);if(m.method==='Runtime.consoleAPICalled'&&m.params.type==='error')errors.push(JSON.stringify(m.params.args));if(m.id){const p=pending.get(m.id);pending.delete(m.id);m.error?p.reject(Error(JSON.stringify(m.error))):p.resolve(m.result);}});
+const call=(method,params={})=>new Promise((resolve,reject)=>{const id=++serial;pending.set(id,{resolve,reject});ws.send(JSON.stringify({id,method,params}));});
+async function evaluate(expression){const r=await call('Runtime.evaluate',{expression,awaitPromise:true,returnByValue:true});if(r.exceptionDetails)throw Error(JSON.stringify(r.exceptionDetails));return r.result.value;}
+async function screenshot(name){const r=await call('Page.captureScreenshot',{format:'png'});writeFileSync(new URL('./'+name+'.png',import.meta.url),Buffer.from(r.data,'base64'));}
+try{
+ await call('Runtime.enable');await call('Network.enable');await call('Network.setCacheDisabled',{cacheDisabled:true});
+ await call('Emulation.setDeviceMetricsOverride',{width:1280,height:900,deviceScaleFactor:1,mobile:false});
+ await call('Page.navigate',{url:'http://127.0.0.1:8765/index.html?oren='+Date.now()});
+ await new Promise(resolve=>setTimeout(resolve,700));errors.length=0;
+ const report=await evaluate(`(async()=>{
+  const {Engine}=await import('/js/engine.js');const {OREN_DIALOGUES,YARA_DIALOGUES,yaraConversation}=await import('/js/dialogue.js');
+  const {loadGame}=await import('/js/save.js');let checks=0;const check=(name,ok)=>{checks++;if(!ok)throw Error(name)};
+  let e;const original=Engine.prototype.render;
+  try{Engine.prototype.render=function(...args){e=this;return original.apply(this,args)};document.querySelector('#new-game').click()}finally{Engine.prototype.render=original}
+  await e.assets.loadRegion('slums');window.orenPreviewEngine=e;
+  const n=e.world.map.npcs.find(n=>n.id==='oren-slum'),p=e.state.player,cfg=e.assets.getConfig('oren'),img=e.assets.get(cfg.animations.idle.sheet);
+  check('two existing Oren locations',e.world.map.npcs.filter(n=>n.shop).length===2&&n.x===1000&&n.y===790);
+  check('real PNG and scale',img.naturalWidth===30&&img.naturalHeight===60&&cfg.scale===1&&!cfg.animations.idle.invalid);
+  check('no failed assets',e.assets.status().failed===0);
+  const probe=document.createElement('canvas');probe.width=30;probe.height=60;const ctx=probe.getContext('2d');ctx.drawImage(img,0,0);
+  const pixels=ctx.getImageData(0,0,30,60).data;check('transparent PNG',pixels.some((v,i)=>i%4===3&&v===0)&&pixels.some((v,i)=>i%4===3&&v===255));
+  const key=k=>window.dispatchEvent(new KeyboardEvent('keydown',{key:k}));
+  const finishLines=()=>{let limit=30;while(e.ui.dialogueLines&&limit-->0)key('Enter');check('lines complete without closing services',limit>0&&e.paused)};
+  const action=text=>{const b=[...document.querySelectorAll('#dialog-actions button')].find(b=>b.textContent.includes(text));if(!b)throw Error('Missing action '+text);b.click();return b};
+  const request=()=>{action('SOLICITAR');check('upgrade conversation',e.ui.dialogueLines===OREN_DIALOGUES.upgrade.lines);finishLines();check('purchase confirmation',e.dialogService==='upgrade-confirm')};
+  p.x=950;p.y=736;e.camera.x=560;e.camera.y=360;e.render(false);key('e');
+  check('first encounter and title',e.ui.dialogueLines===OREN_DIALOGUES.reunion.lines&&document.querySelector('#speaker').textContent==='Oren · Mecânico');
+  check('faces left',n.spriteTarget.facing===-1);key('e');check('Kael responds',document.querySelector('#speaker').textContent==='Kael');
+  p.x=1040;e.render(false);check('direction stays fixed',n.spriteTarget.facing===-1);
+  finishLines();check('first conversation saved',loadGame().events.includes('oren-reunion'));
+  check('talking does not spend credits',e.state.credits===40&&p.maxHealth===100);
+  key('e');check('close restores default',!e.paused&&n.spriteTarget.facing===-1);
+  key('e');check('repeat and right facing',e.ui.dialogueLines===OREN_DIALOGUES.repeat.lines&&n.spriteTarget.facing===1);finishLines();
+  request();check('no charge before confirmation',e.state.credits===40&&p.maxHealth===100);
+  const buy=[...document.querySelectorAll('#dialog-actions button')].find(b=>b.textContent.includes('COMPRAR')),callback=buy.onclick;
+  p.health=20;buy.click();check('purchase price and effect',e.state.credits===20&&p.maxHealth===115&&p.health===115);
+  callback();check('duplicate click does not buy twice',e.state.credits===20&&p.maxHealth===115);
+  check('purchase persisted',loadGame().credits===20&&loadGame().player.maxHealth===115);
+  action('VOLTAR AOS');request();action('COMPRAR');check('explicit next tier works',e.state.credits===0&&p.maxHealth===130);
+  key('e');key('e');finishLines();request();
+  const disabled=[...document.querySelectorAll('#dialog-actions button')].find(b=>b.textContent.includes('COMPRAR'));
+  check('insufficient credits disables purchase',disabled.disabled&&document.querySelector('#dialog-text').textContent.includes('20 créditos'));
+  e.confirmOrenUpgrade();check('insufficient credits rechecked',e.state.credits===0&&p.maxHealth===130);
+  key('e');e.state.bosses[0].dead=true;key('e');
+  check('Matrona conversation selected',e.ui.dialogueLines===OREN_DIALOGUES.matrona.lines);finishLines();
+  check('Matrona conversation saved',loadGame().events.includes('oren-matrona'));key('e');
+  key('e');check('Matrona revelation does not repeat',e.ui.dialogueLines===OREN_DIALOGUES.repeat.lines);finishLines();
+  const originalMax=p.maxHealth;e.state.credits=40;p.maxHealth=190;request();
+  check('max tier disables buying',[...document.querySelectorAll('#dialog-actions button')].find(b=>b.textContent.includes('COMPRAR')).disabled);
+  e.confirmOrenUpgrade();check('max tier rechecked',p.maxHealth===190&&e.state.credits===40);key('e');
+  p.maxHealth=originalMax;p.health=originalMax;
+  check('Yara story unaffected',yaraConversation(e.state)===YARA_DIALOGUES.reunion&&!e.state.events.includes('yara-reunion'));
+  const originalY=e.world.map.npcs.find(n=>n.id==='yara');p.x=570;key('e');
+  check('Yara still converses normally',e.ui.dialogueLines===YARA_DIALOGUES.reunion.lines&&originalY.spriteTarget.facing===-1);e.closeDialog();
+  p.x=950;p.y=736;e.camera.x=560;e.camera.y=360;key('e');finishLines();request();
+  check('anchor and smoothing',n.spriteTarget.x===1014&&n.spriteTarget.y===790&&e.ctx.imageSmoothingEnabled===false);
+  return {checks,dimensions:[img.naturalWidth,img.naturalHeight],scale:cfg.scale};
+ })()`);
+ if(errors.length)throw Error('Console errors: '+errors.join('\n'));
+ await screenshot('oren-shop-preview');
+ await evaluate(`document.querySelector('#dialog-actions button').focus()`);
+ await call('Page.bringToFront');
+ await call('Input.dispatchKeyEvent',{type:'keyDown',key:'Enter',code:'Enter',windowsVirtualKeyCode:13,text:'\r'});
+ await call('Input.dispatchKeyEvent',{type:'keyUp',key:'Enter',code:'Enter',windowsVirtualKeyCode:13});
+ const keyboard=await evaluate(`orenPreviewEngine.state.credits===20&&orenPreviewEngine.state.player.maxHealth===145&&orenPreviewEngine.dialogService==='upgrade-result'`);
+ if(!keyboard)throw Error('Focused purchase button did not work with Enter: '+JSON.stringify(await evaluate(`({credits:orenPreviewEngine.state.credits,maxHealth:orenPreviewEngine.state.player.maxHealth,stage:orenPreviewEngine.dialogService,focused:document.activeElement.outerHTML})`)));report.checks++;
+ await evaluate(`orenPreviewEngine.closeDialog();orenPreviewEngine.render(false)`);
+ await screenshot('oren-preview');
+ if(errors.length)throw Error('Console errors: '+errors.join('\n'));
+ console.log('PASS: Oren browser integration, dialogues, facing, explicit purchases, double-click guard, insufficient credits, tier limit, persistence and Yara regression. '+JSON.stringify(report));
+}finally{ws.close();}

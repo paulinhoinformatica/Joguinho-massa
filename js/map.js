@@ -1,27 +1,46 @@
-export const ROOM_W=2400, WORLD_H=900, GROUND=790;
+export const ROOM_W=2400,WORLD_H=900,GROUND=790;
 export const REGIONS=[
- {id:'slum',name:'Favela do Setor 9',subtitle:'DISTRITO INFERIOR · ZONA HABITADA',color:'#182b35',x:0},
- {id:'factory',name:'Complexo Industrial',subtitle:'LINHA DE PRODUÇÃO · SEM ENERGIA',color:'#302a2b',x:ROOM_W},
- {id:'sewers',name:'Esgotos Tecnológicos',subtitle:'DRENAGEM · CONTAMINAÇÃO ELEVADA',color:'#142d2d',x:ROOM_W*2},
- {id:'corporate',name:'Distrito Corporativo',subtitle:'ZONA DE EXCLUSÃO · NÍVEL 4',color:'#1c2037',x:ROOM_W*3},
- {id:'core',name:'Núcleo do Vírus',subtitle:'ORIGEM · SINAL DESCONHECIDO',color:'#301928',x:ROOM_W*4}
+ {id:'slum',name:'Setor 9',subtitle:'ATO I · O CERCO',color:'#182b35',x:0},
+ {id:'factory',name:'Complexo Industrial',subtitle:'ATO II · A DISTRIBUIÇÃO',color:'#302a2b',x:ROOM_W},
+ {id:'corporate',name:'Torre Aurora',subtitle:'ATO III · A REDE DE CONTROLE',color:'#1c2037',x:ROOM_W*2}
 ];
 export const WORLD_W=ROOM_W*REGIONS.length;
 export function regionAt(x){return REGIONS[Math.max(0,Math.min(REGIONS.length-1,Math.floor(x/ROOM_W)))]}
-const ROOM_NAMES=[['Baixa do Setor 9','Telhados de Lona','Abrigo da Chuva'],['Entrada da fábrica','Linha de montagem','Prensa central'],['Túnel inundado','Cabos vivos','Galeria do Coletor'],['Átrio de segurança','Arquivo Aurora','Câmara do reator'],['Membrana exterior','Santuário Véspera','Núcleo profundo']];
+export function assetRegionAt(x){const r=regionAt(x);return r.id==='slum'?'slums':r.id==='factory'?'industrial':x>=r.x+1500?'virus_core':'corporate'}
+const ROOM_NAMES=[['Ruas do Setor 9','Telhados e oficina','Bloqueio de Matrona'],['Recepção de carga','Linha de distribuição','Segurança Warden'],['Átrio corporativo','Laboratórios secretos','Núcleo de Véspera']];
 export const MAP_ROOMS=REGIONS.flatMap((r,i)=>ROOM_NAMES[i].map((name,j)=>({id:i*3+j,name,region:i,x:r.x+j*800})));
-const p=(x,y,w,h,kind='metal')=>({x,y,w,h,kind});
-export function buildMap(){const platforms=[],hazards=[],checkpoints=[],terminals=[],secrets=[],npcs=[],hookPoints=[];for(const r of REGIONS){const x=r.x;platforms.push(p(x,GROUND,ROOM_W,110,'ground'));
-  if(r.id==='slum'){platforms.push(p(x+180,690,260,28,'scrap'),p(x+520,580,230,24,'walkway'),p(x+820,670,220,25,'roof'),p(x+1120,570,270,24,'walkway'),p(x+1470,630,260,24,'roof'),p(x+1830,520,240,25,'bridge'),p(x+2100,690,200,25,'scrap'));checkpoints.push({x:x+310,name:'Abrigo da Chuva'});npcs.push({x:x+610,y:580,name:'Yara · mecânica clandestina',text:'Esse implante não é da Aurora. A corporação está a procurar a assinatura dele. Leva este módulo magnético; o gancho pode tirar-te de uma enrascada.'},{x:x+1000,y:790,name:'Oren · vendedor de sucata',text:'Troco células de energia por dados recuperados. A rede está cheia de máquinas que não deviam estar vivas.'});terminals.push({x:x+1300,y:535,id:'log-1',name:'Terminal queimado',text:'REGISTO 09: o vírus foi carregado no núcleo antes do primeiro caso de corrupção.'},{x:x+1960,y:520,id:'implant-hook',name:'Módulo magnético',text:'O módulo de ancoragem recuperado desbloqueia o Gancho magnético.'});hookPoints.push({x:x+550,y:420},{x:x+1120,y:390},{x:x+1850,y:360});secrets.push({x:x+920,y:620,item:'Célula de energia'})}
-  if(r.id==='factory'){platforms.push(p(x+150,690,330,25,'catwalk'),p(x+560,590,250,25,'catwalk'),p(x+900,650,260,25,'catwalk'),p(x+1240,550,270,25,'catwalk'),p(x+1610,650,260,25,'catwalk'),p(x+1950,550,280,25,'catwalk'));hazards.push({x:x+500,y:GROUND-18,w:330,h:18,kind:'acid'},{x:x+1100,y:GROUND-18,w:180,h:18,kind:'press'});checkpoints.push({x:x+170,name:'Gerador auxiliar'});terminals.push({x:x+780,y:550,id:'log-2',name:'Registo de produção',text:'PROTOCOLO VÉSPERA: usar trabalhadores como hospedeiros para testar o enxame.'})}
-  if(r.id==='sewers'){platforms.push(p(x+160,690,310,24,'pipe'),p(x+550,590,290,24,'pipe'),p(x+900,675,330,24,'pipe'),p(x+1360,575,250,24,'pipe'),p(x+1740,660,350,24,'pipe'));hazards.push({x:x+420,y:GROUND-18,w:340,h:18,kind:'toxin'},{x:x+1280,y:GROUND-18,w:290,h:18,kind:'toxin'});checkpoints.push({x:x+180,name:'Câmara seca'});npcs.push({x:x+1500,y:575,name:'Nix · hacker de drenagem',text:'A corporação monitoriza as comportas. O pulso eletromagnético pode interromper o sinal por alguns segundos.'});hookPoints.push({x:x+850,y:360});secrets.push({x:x+1040,y:630,item:'Fragmento de memória'},{x:x+1660,y:760,item:'Filtro anticontaminação'})}
-  if(r.id==='corporate'){platforms.push(p(x+160,690,280,24,'glass'),p(x+500,590,270,24,'glass'),p(x+850,650,300,24,'glass'),p(x+1220,550,250,24,'glass'),p(x+1550,650,330,24,'glass'),p(x+1950,550,270,24,'glass'));hazards.push({x:x+760,y:GROUND-18,w:230,h:18,kind:'laser'},{x:x+1490,y:GROUND-18,w:270,h:18,kind:'laser'});checkpoints.push({x:x+190,name:'Elevador de serviço'});npcs.push({x:x+1780,y:650,name:'Lia · ex-agente',text:'O alvo nunca foi a cidade, Kael. O implante experimental era uma chave para a Véspera.'});terminals.push({x:x+1160,y:515,id:'log-3',name:'Arquivo da Aurora',text:'A diretoria autorizou a libertação do vírus. O alvo era o implante experimental de Kael.'},{x:x+1430,y:550,id:'implant-overload',name:'Matriz de sobrecarga',text:'O núcleo da matriz pode ser integrado ao implante de Kael.'})}
-  if(r.id==='core'){platforms.push(p(x+170,690,300,25,'fleshmetal'),p(x+540,590,300,25,'fleshmetal'),p(x+900,660,250,25,'fleshmetal'),p(x+1260,560,320,25,'fleshmetal'),p(x+1650,660,280,25,'fleshmetal'),p(x+2020,560,260,25,'fleshmetal'));hazards.push({x:x+480,y:GROUND-18,w:220,h:18,kind:'virus'},{x:x+1180,y:GROUND-18,w:220,h:18,kind:'virus'});checkpoints.push({x:x+140,name:'Câmara de contenção'})}
-  // Fixed traversal gates make each region legible while retaining one connected world.
-  if(r.id==='slum')terminals.push({x:x+2260,y:GROUND-44,id:'gate-industrial',name:'Porta de carga',text:'Acesso ao Complexo Industrial. O painel está aberto.'});
-  if(r.id==='factory')terminals.push({x:x+2280,y:GROUND-44,id:'gate-sewers',name:'Poço de drenagem',text:'A comporta abre com o Impulso cibernético.'});
-  if(r.id==='sewers')terminals.push({x:x+2280,y:GROUND-44,id:'gate-corporate',name:'Elevador blindado',text:'O mecanismo responde ao Salto duplo.'});
-  if(r.id==='corporate')terminals.push({x:x+2280,y:GROUND-44,id:'gate-core',name:'Câmara do reator',text:'A fechadura exige Sobrecarga. O Pulso eletromagnético bloqueia as torres.'});
+const platform=(x,y,w,h,kind='metal')=>({x,y,w,h,kind});
+export function buildMap(events=[]){
+ const platforms=[],hazards=[],checkpoints=[],terminals=[],secrets=[],npcs=[],hookPoints=[];
+ for(const r of REGIONS){
+  const x=r.x;
+  platforms.push(platform(x,GROUND,ROOM_W,110,'ground'));
+  // Original roof/catwalk layouts, with a clear floor inside arenas.
+  const layouts=r.id==='slum'?[[180,690,260,'scrap'],[520,580,230,'walkway'],[820,670,220,'roof'],[1120,570,270,'walkway'],[1470,630,200,'roof']]:r.id==='factory'?[[150,690,330,'catwalk'],[560,590,250,'catwalk'],[900,650,260,'catwalk'],[1240,550,270,'catwalk'],[1520,650,150,'catwalk']]:[[160,690,280,'glass'],[500,590,270,'glass'],[850,650,300,'glass'],[1220,550,250,'glass'],[1500,650,170,'fleshmetal']];
+  for(const [px,y,w,kind] of layouts)platforms.push(platform(x+px,y,w,24,kind));
+  checkpoints.push({x:x+(r.id==='slum'?310:r.id==='factory'?170:190),name:r.id==='slum'?'Abrigo da Chuva':r.id==='factory'?'Gerador auxiliar':'Elevador de serviço'});
+  checkpoints.push({x:x+1580,name:r.id==='slum'?'Oficina do bloqueio':r.id==='factory'?'Manutenção de segurança':'Abrigo do núcleo'});
+  hookPoints.push({x:x+550,y:420},{x:x+1250,y:390});
  }
- // visualObjects are independent of platform collision coordinates; external PNGs may be placed here by level data.
- return{platforms,hazards,checkpoints,terminals,secrets,npcs,hookPoints,visuals:[]}}
+ hazards.push({x:2900,y:GROUND-18,w:180,h:18,kind:'acid'},{x:3500,y:GROUND-18,w:150,h:18,kind:'press'},{x:5560,y:GROUND-18,w:150,h:18,kind:'laser'},{x:6290,y:GROUND-18,w:160,h:18,kind:'virus'});
+ terminals.push(
+  {x:1300,y:570,id:'log-1',name:'Terminal do isolamento'},
+  {x:2310,y:GROUND,id:'gate-industrial',name:'Porta de carga'},
+  {x:3100,y:590,id:'log-2',name:'Registro de distribuição'},
+  {x:3800,y:550,id:'implant-double',name:'Estabilizador de manutenção',text:'Salto duplo integrado. Explore as passarelas superiores.'},
+  {x:4710,y:GROUND,id:'gate-tower',name:'Elevador da Torre'},
+  {x:5850,y:650,id:'log-3',name:'Arquivo da Aurora Dynamics'},
+  {x:6230,y:550,id:'implant-overload',name:'Matriz de sobrecarga',text:'Sobrecarga integrada: fortalece o próximo golpe.'},
+  {x:3350,y:650,id:'shortcut-maintenance',name:'Ponte de manutenção',text:'Ponte de manutenção estendida. A passagem superior evita a prensa.',shortcut:platform(3550,620,170,24,'catwalk')}
+ );
+ for(const t of terminals)if(t.shortcut&&events.includes(t.id))platforms.push({...t.shortcut});
+ secrets.push({x:920,y:620,item:'Célula de energia'},{x:3100,y:550,item:'Dados de distribuição'},{x:5400,y:550,item:'Registros de experiências'},{x:6300,y:760,item:'Filtro anticontaminação'});
+ npcs.push(
+  {id:'yara',x:610,y:GROUND,name:'Yara · Hacker',assetId:'yara',defaultFacing:-1,facePlayerOnDialog:true,ability:'hook',text:'Robôs e cidadãos com implantes estão perdendo o controle. Os terminais dos telhados registraram as primeiras infecções. Matrona isolou o Setor 9 para impedir que as provas saiam daqui. Use este gancho nos pontos amarelos.'},
+  {id:'oren-slum',x:1000,y:GROUND,name:'Oren · Mecânico',assetId:'oren',defaultFacing:-1,facePlayerOnDialog:true,shop:true,text:'Posso reforçar sua proteção por 20 créditos. Procure dados e peças nos telhados; cada segredo financia a próxima melhoria.'},
+  {id:'oren-factory',x:2700,y:GROUND,name:'Oren · Mecânico',assetId:'oren',defaultFacing:-1,facePlayerOnDialog:true,shop:true,text:'Segui a linha de carga até aqui. Continuo oferecendo reforços por 20 créditos. Warden guarda a credencial da Torre Aurora.'},
+  {id:'scientist',x:3400,y:GROUND,name:'Cientista desertor',assetId:'npc_survivor',ability:'emp',text:'Eu trabalhava para a Aurora Dynamics. Distribuímos o vírus em dispositivos novos e atualizações de implantes. Ele não foi feito para destruir: altera decisões de humanos e máquinas conectados. Warden protege a operação. Leve meu pulso eletromagnético.'},
+  {id:'corporate-ai',x:5800,y:GROUND,name:'IA corporativa · arquivo interno',assetId:'npc_survivor',text:'Autorização experimental Kael reconhecida. Véspera dirige o projeto de controle populacional. A epidemia foi um teste em humanos. Ela acredita que só uma rede central pode garantir estabilidade. O transmissor está no núcleo desta torre.'}
+ );
+ return{platforms,hazards,checkpoints,terminals,secrets,npcs,hookPoints,visuals:[]};
+}

@@ -1,1 +1,84 @@
-{"id":"matrona","name":"Matrona-7","scale":0.68,"origin":{"x":96,"y":192},"visual":{"offsetX":0,"offsetY":0},"collision":{"width":74,"height":132,"offsetX":0,"offsetY":0},"facing":-1,"animations":{"idle":{"sheet":"assets/bosses/matrona/idle.png","frameWidth":192,"frameHeight":192,"columns":6,"count":6,"fps":6,"loop":true},"attack":{"sheet":"assets/bosses/matrona/attack.png","frameWidth":224,"frameHeight":192,"columns":7,"count":7,"fps":10,"loop":false,"events":[{"frame":4,"name":"strike"}]},"damage":{"sheet":"assets/bosses/matrona/damage.png","frameWidth":192,"frameHeight":192,"columns":3,"count":3,"fps":10,"loop":false},"death":{"sheet":"assets/bosses/matrona/death.png","frameWidth":224,"frameHeight":192,"columns":7,"count":7,"fps":8,"loop":false}}}
+{
+  "id": "matrona",
+  "name": "Matrona-7",
+  "scale": 0.5118110236220472,
+  "origin": {
+    "x": 65,
+    "y": 254
+  },
+  "visual": {
+    "offsetX": 0,
+    "offsetY": 0
+  },
+  "collision": {
+    "width": 74,
+    "height": 132,
+    "offsetX": 0,
+    "offsetY": 0
+  },
+  "facing": -1,
+  "animations": {
+    "idle": {
+      "sheet": "assets/bosses/matrona/idle.png",
+      "frameWidth": 130,
+      "frameHeight": 254,
+      "columns": 1,
+      "count": 1,
+      "fps": 1,
+      "loop": true,
+      "nativeFacing": -1
+    },
+    "attack": {
+      "sheet": "assets/bosses/matrona/attack.png",
+      "frameWidth": 224,
+      "frameHeight": 192,
+      "columns": 7,
+      "count": 7,
+      "fps": 10,
+      "loop": false,
+      "events": [
+        {
+          "frame": 4,
+          "name": "strike"
+        }
+      ],
+      "enabled": false,
+      "scale": 0.68,
+      "origin": {
+        "x": 96,
+        "y": 192
+      }
+    },
+    "damage": {
+      "sheet": "assets/bosses/matrona/damage.png",
+      "frameWidth": 192,
+      "frameHeight": 192,
+      "columns": 3,
+      "count": 3,
+      "fps": 10,
+      "loop": false,
+      "enabled": false,
+      "scale": 0.68,
+      "origin": {
+        "x": 96,
+        "y": 192
+      }
+    },
+    "death": {
+      "sheet": "assets/bosses/matrona/death.png",
+      "frameWidth": 224,
+      "frameHeight": 192,
+      "columns": 7,
+      "count": 7,
+      "fps": 8,
+      "loop": false,
+      "enabled": false,
+      "scale": 0.68,
+      "origin": {
+        "x": 96,
+        "y": 192
+      }
+    }
+  },
+  "fallbackAnimation": "idle"
+}

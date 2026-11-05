@@ -10,17 +10,27 @@
   <header class="topbar"><strong>NOVA <i>AURORA</i></strong><span id="area-label">SECTOR 09 · FAVELAS INFERIORES</span><button id="pause-open" aria-label="Pausar">Ⅱ</button></header>
   <section class="stage"><canvas id="game" width="960" height="540" aria-label="Nova Aurora, jogo de plataformas"></canvas>
     <div class="hud"><div class="status"><div class="portrait">K</div><div><strong>KAEL</strong><div class="bar"><i id="health-fill"></i></div><small id="health-text">100 / 100</small></div><div class="energy"><span>ENERGIA</span><div class="bar cyan"><i id="energy-fill"></i></div><small id="energy-text">100%</small></div><div class="credits"><span>CR</span><strong id="credits-label">40</strong></div></div>
-      <div class="objective" id="objective">Procura o abrigo da oficina · E para interagir</div><div class="toast" id="toast"></div>
+      <div class="objective" id="objective">Ato 1 · Investigue as infecções no Setor 9 · E para interagir</div><div class="toast" id="toast"></div>
       <div class="boss-hud hidden" id="boss-hud"><span id="boss-name">CHEFE</span><div class="bar bossbar"><i id="boss-fill"></i></div></div>
     </div>
-    <div class="screen" id="title-screen"><div class="title-card"><p class="eyebrow">UM METROIDVANIA CYBERPUNK ORIGINAL</p><h1>NOVA<br><em>AURORA</em></h1><p class="subtitle">A cidade esqueceu quem a construiu.</p><label for="pilot-name">IDENTIFICAÇÃO</label><input id="pilot-name" maxlength="14" value="Kael"><div class="actions"><button id="new-game" class="primary">NOVA JORNADA</button><button id="continue-game">CONTINUAR</button></div><small>Setor 9 · Chuva ácida · 03:17</small></div></div>
+    <div class="screen" id="title-screen"><div class="title-card"><p class="eyebrow">UM METROIDVANIA CYBERPUNK ORIGINAL</p><h1>NOVA<br><em>AURORA</em></h1><p class="subtitle">Um vírus controla a cidade. Kael precisa descobrir quem o transmite.</p><label for="pilot-name">IDENTIFICAÇÃO</label><input id="pilot-name" maxlength="14" value="Kael"><div class="actions"><button id="new-game" class="primary">NOVA JORNADA</button><button id="continue-game">CONTINUAR</button></div><small>Setor 9 · Chuva ácida · 03:17</small></div></div>
     <div class="screen hidden" id="pause-screen"><div class="panel"><p class="eyebrow">TERMINAL PESSOAL</p><h2 id="panel-title">PAUSADO</h2><nav><button data-tab="map">Mapa</button><button data-tab="abilities">Implantes</button><button data-tab="journal">Registos</button></nav><div id="panel-content"></div><div class="actions"><button id="save-button">GUARDAR</button><button id="resume-button" class="primary">VOLTAR AO JOGO</button></div></div></div>
-    <div class="screen hidden" id="dialog-screen"><div class="dialog"><strong id="speaker">TERMINAL</strong><p id="dialog-text"></p><button id="dialog-close">FECHAR · E</button></div></div>
+    <div class="screen hidden" id="dialog-screen"><div class="dialog"><strong id="speaker">TERMINAL</strong><p id="dialog-text"></p><div id="dialog-actions" class="actions hidden"></div><button id="dialog-close">FECHAR · E</button></div></div>
     <div class="screen hidden" id="death-screen"><div class="panel"><p class="eyebrow">SINAL PERDIDO</p><h2>O implante entrou em colapso</h2><p id="death-copy">Acordas no último abrigo ativo.</p><button id="respawn-button" class="primary">REINICIAR SINAL</button></div></div>
+    <div class="screen hidden" id="ending-screen" role="dialog" aria-modal="true" aria-label="Conclusão da campanha">
+      <div class="ending-card">
+        <div class="ending-city" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><span class="ending-signal"></span></div>
+        <p class="eyebrow">TRANSMISSÃO INTERROMPIDA</p><h2>Uma nova aurora</h2>
+        <p class="ending-beat">Kael desliga o núcleo. As ordens da Aurora Dynamics desaparecem da rede. Pela primeira vez em dias, a cidade fica em silêncio.</p>
+        <p class="ending-beat">Robôs interrompem os ataques. Cidadãos recuperam o controle de seus implantes. Yara e Oren abrem os abrigos para ajudar os sobreviventes.</p>
+        <p class="ending-beat">Os registros de Véspera agora pertencem à cidade. A recuperação começa — e Kael seguirá procurando quem ainda precisa de ajuda.</p>
+        <small id="ending-summary"></small><button id="ending-continue" class="primary">EXPLORAR APÓS O FINAL</button>
+      </div>
+    </div>
     <div class="boss-warning hidden" id="boss-warning">SINAL DE AMEAÇA · ALVO IDENTIFICADO</div>
     <aside id="asset-lab" class="asset-lab hidden" aria-label="Laboratório de recursos gráficos">
       <header><strong>LABORATÓRIO DE ASSETS</strong><button id="asset-lab-close" type="button">FECHAR · G</button></header>
-      <div class="asset-lab-controls"><label>Entidade <select id="asset-lab-entity"><option value="protagonist">Kael</option><option value="cyborg_soldier">Patrulheiro</option><option value="infected_drone">Drone</option><option value="infected_robot">Robô infetado</option></select></label><label>Animação <select id="asset-lab-animation"><option>idle</option></select></label><label>Escala <input id="asset-lab-scale" type="range" min="0.5" max="1.5" step="0.05" value="1"></label><button id="asset-lab-flip" type="button">Espelhar</button></div>
+      <div class="asset-lab-controls"><label>Entidade <select id="asset-lab-entity"><option value="protagonist">Kael</option><option value="cyborg_soldier">Patrulheiro</option><option value="infected_drone">Drone</option><option value="infected_robot">Robô infetado</option><option value="npc_survivor">NPC</option><option value="yara">Yara</option><option value="oren">Oren</option><option value="matrona">Matrona</option><option value="warden">Warden</option><option value="vespera">Véspera</option></select></label><label>Animação <select id="asset-lab-animation"><option>idle</option></select></label><label>Escala <input id="asset-lab-scale" type="range" min="0.5" max="1.5" step="0.05" value="1"></label><button id="asset-lab-flip" type="button">Espelhar</button></div>
       <canvas id="asset-lab-canvas" width="480" height="200" aria-label="Pré-visualização de sprite com linha do chão"></canvas>
       <ul id="asset-lab-results"></ul><pre id="asset-lab-errors"></pre>
     </aside>

@@ -1,0 +1,20 @@
+{
+  "id": "oren",
+  "name": "Oren",
+  "scale": 1,
+  "origin": { "x": 15, "y": 60 },
+  "visual": { "offsetX": 0, "offsetY": 0 },
+  "collision": { "width": 28, "height": 54, "offsetX": 0, "offsetY": 0 },
+  "facing": 1,
+  "animations": {
+    "idle": {
+      "sheet": "assets/characters/npcs/oren/idle.png",
+      "frameWidth": 30,
+      "frameHeight": 60,
+      "columns": 1,
+      "count": 1,
+      "fps": 1,
+      "loop": true
+    }
+  }
+}

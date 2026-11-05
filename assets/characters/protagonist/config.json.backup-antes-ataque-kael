@@ -1,0 +1,162 @@
+{
+  "id": "protagonist",
+  "name": "Kael",
+  "scale": 0.75,
+  "origin": {
+    "x": 72.5,
+    "y": 95
+  },
+  "visual": {
+    "offsetX": 0,
+    "offsetY": 0
+  },
+  "collision": {
+    "width": 30,
+    "height": 54,
+    "offsetX": 0,
+    "offsetY": 0
+  },
+  "facing": 1,
+  "animations": {
+    "idle": {
+      "sheet": "assets/characters/protagonist/kael/spritesheets/idle.png",
+      "frameWidth": 145,
+      "frameHeight": 114,
+      "columns": 1,
+      "count": 1,
+      "fps": 6,
+      "loop": true
+    },
+    "walk": {
+      "sheet": "assets/characters/protagonist/kael/spritesheets/walk.png",
+      "frameWidth": 145,
+      "frameHeight": 114,
+      "columns": 8,
+      "count": 8,
+      "fps": 10,
+      "loop": true
+    },
+    "run": {
+      "sheet": "assets/characters/protagonist/kael/spritesheets/walk.png",
+      "frameWidth": 145,
+      "frameHeight": 114,
+      "columns": 8,
+      "count": 8,
+      "fps": 14,
+      "loop": true
+    },
+    "jump": {
+      "sheet": "assets/characters/protagonist/kael/spritesheets/idle.png",
+      "frameWidth": 145,
+      "frameHeight": 114,
+      "columns": 1,
+      "count": 1,
+      "fps": 9,
+      "loop": false,
+      "freezeLast": true
+    },
+    "fall": {
+      "sheet": "assets/characters/protagonist/kael/spritesheets/idle.png",
+      "frameWidth": 145,
+      "frameHeight": 114,
+      "columns": 1,
+      "count": 1,
+      "fps": 6,
+      "loop": true
+    },
+    "landing": {
+      "sheet": "assets/characters/protagonist/kael/spritesheets/landing_placeholder.png",
+      "frameWidth": 145,
+      "frameHeight": 114,
+      "columns": 3,
+      "count": 3,
+      "fps": 12,
+      "loop": false,
+      "freezeLast": true,
+      "events": [
+        {
+          "frame": 1,
+          "name": "land"
+        }
+      ]
+    },
+    "melee": {
+      "sheet": "assets/characters/protagonist/kael/spritesheets/melee_placeholder.png",
+      "frameWidth": 145,
+      "frameHeight": 114,
+      "columns": 4,
+      "count": 4,
+      "fps": 12,
+      "loop": false,
+      "freezeLast": true,
+      "events": [
+        {
+          "frame": 2,
+          "name": "hit"
+        }
+      ]
+    },
+    "ranged": {
+      "sheet": "assets/characters/protagonist/kael/spritesheets/ranged_placeholder.png",
+      "frameWidth": 145,
+      "frameHeight": 114,
+      "columns": 4,
+      "count": 4,
+      "fps": 12,
+      "loop": false,
+      "freezeLast": true,
+      "events": [
+        {
+          "frame": 2,
+          "name": "fire"
+        }
+      ]
+    },
+    "dodge": {
+      "sheet": "assets/characters/protagonist/kael/spritesheets/idle.png",
+      "frameWidth": 145,
+      "frameHeight": 114,
+      "columns": 1,
+      "count": 1,
+      "fps": 12,
+      "loop": false,
+      "freezeLast": true
+    },
+    "special": {
+      "sheet": "assets/characters/protagonist/kael/spritesheets/special_placeholder.png",
+      "frameWidth": 145,
+      "frameHeight": 114,
+      "columns": 4,
+      "count": 4,
+      "fps": 12,
+      "loop": false,
+      "freezeLast": true,
+      "events": [
+        {
+          "frame": 2,
+          "name": "activate"
+        }
+      ]
+    },
+    "damage": {
+      "sheet": "assets/characters/protagonist/kael/spritesheets/idle.png",
+      "frameWidth": 145,
+      "frameHeight": 114,
+      "columns": 1,
+      "count": 1,
+      "fps": 12,
+      "loop": false,
+      "freezeLast": true
+    },
+    "death": {
+      "sheet": "assets/characters/protagonist/kael/spritesheets/idle.png",
+      "frameWidth": 145,
+      "frameHeight": 114,
+      "columns": 1,
+      "count": 1,
+      "fps": 8,
+      "loop": false,
+      "freezeLast": true
+    }
+  }
+}

@@ -81,20 +81,24 @@
       ]
     },
     "melee": {
-      "sheet": "assets/characters/protagonist/kael/spritesheets/melee_placeholder.png",
-      "frameWidth": 145,
-      "frameHeight": 114,
-      "columns": 4,
-      "count": 4,
-      "fps": 12,
+      "sheet": "assets/characters/protagonist/kael/spritesheets/melee.png",
+      "frameWidth": 170,
+      "frameHeight": 120,
+      "columns": 8,
+      "count": 8,
+      "fps": 18,
       "loop": false,
       "freezeLast": true,
       "events": [
         {
-          "frame": 2,
+          "frame": 4,
           "name": "hit"
         }
-      ]
+      ],
+      "origin": {
+        "x": 72.5,
+        "y": 101
+      }
     },
     "ranged": {
       "sheet": "assets/characters/protagonist/kael/spritesheets/ranged_placeholder.png",

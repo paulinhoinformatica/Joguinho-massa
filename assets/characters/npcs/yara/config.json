@@ -1,0 +1,20 @@
+{
+  "id": "yara",
+  "name": "Yara",
+  "scale": 1,
+  "origin": { "x": 10.5, "y": 60 },
+  "visual": { "offsetX": 0, "offsetY": 0 },
+  "collision": { "width": 28, "height": 54, "offsetX": 0, "offsetY": 0 },
+  "facing": 1,
+  "animations": {
+    "idle": {
+      "sheet": "assets/characters/npcs/yara/idle.png",
+      "frameWidth": 21,
+      "frameHeight": 60,
+      "columns": 1,
+      "count": 1,
+      "fps": 1,
+      "loop": true
+    }
+  }
+}

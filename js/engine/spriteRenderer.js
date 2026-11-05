@@ -20,7 +20,7 @@ export class SpriteRenderer {
   available(entityId, animation) {
     const key = this.animationName(entityId, animation);
     const def = this.assets.getConfig(entityId)?.animations?.[key];
-    if (!def) return false;
+    if (!def || def.enabled === false) return false;
     return Boolean((def.sheet && this.assets.get(def.sheet)) ||
       def.frames?.some(path => this.assets.get(path)));
   }
@@ -33,7 +33,7 @@ export class SpriteRenderer {
     let key = this.animationName(entityId, animation);
     let def = cfg.animations?.[key];
 
-    if (!def || !(def.sheet ? this.assets.get(def.sheet) :
+    if (!def || def.enabled === false || !(def.sheet ? this.assets.get(def.sheet) :
         def.frames?.some(path => this.assets.get(path)))) {
       const message = `${entityId}.${animation}: sprite ausente; usando idle temporariamente.`;
       if (!this.warned.has(message)) {
@@ -70,7 +70,8 @@ export class SpriteRenderer {
 
     ctx.save();
     ctx.imageSmoothingEnabled = false;
-    if (direction < 0) {
+    const nativeDirection = def.nativeFacing ?? cfg.nativeFacing ?? 1;
+    if (direction * nativeDirection < 0) {
       // Espelha ao redor do centro do retangulo de destino.
       ctx.translate(2 * dx + dw, 0);
       ctx.scale(-1, 1);
