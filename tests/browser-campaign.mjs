@@ -51,6 +51,8 @@ try{
    e.update(1/60);checkCampaign('boss intro '+b.title,e.paused&&b.active);resumeCampaign();
    const serial=p.attackSerial||0;let frames=0;
    while(!b.dead&&frames<3600){
+    // Keep the progression probe in melee range of the mobile first boss.
+    if(b.assetId==='matrona'){p.x=b.x-p.w-12;p.vx=0}
     if(p.attackTimer<=0&&p.attackCooldown<=1/60)e.pressed.add('j');
     e.update(1/60);frames++;
    }

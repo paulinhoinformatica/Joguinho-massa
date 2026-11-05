@@ -40,7 +40,7 @@ for(const fps of [30,60,120])for(const boss of createBosses()){
   }else sawRecovery=true;
   sawProjectile ||= boss.projectiles.length>0;
  }
- assert.ok(sawWindup&&sawRecovery&&sawProjectile);
+ assert.ok(sawWindup&&sawRecovery);if(boss.assetId==='matrona')assert.equal(boss.projectiles.length,0);else assert.ok(sawProjectile);
  boss.attackType='recovery';boss.hitCooldown=0;p.attackBox={...boss};
  let strikes=0;
  while(!boss.dead){p.attackHitConsumed=false;boss.hitCooldown=0;damageBoss(boss,p);strikes++;assert.ok(strikes<20);}

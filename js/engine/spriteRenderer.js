@@ -20,20 +20,20 @@ export class SpriteRenderer {
   available(entityId, animation) {
     const key = this.animationName(entityId, animation);
     const def = this.assets.getConfig(entityId)?.animations?.[key];
-    if (!def || def.enabled === false) return false;
+    if (!def || def.enabled === false || def.invalid) return false;
     return Boolean((def.sheet && this.assets.get(def.sheet)) ||
       def.frames?.some(path => this.assets.get(path)));
   }
 
   draw(ctx, entityId, animation, target, dt = 0,
        { x = target.x, y = target.y, facing = null, scaleOverride = null,
-         onEvent = () => {} } = {}) {
+         onEvent = () => {}, frameOverride = null } = {}) {
     const cfg = this.assets.getConfig(entityId);
     if (!cfg) return false;
     let key = this.animationName(entityId, animation);
     let def = cfg.animations?.[key];
 
-    if (!def || def.enabled === false || !(def.sheet ? this.assets.get(def.sheet) :
+    if (!def || def.enabled === false || def.invalid || !(def.sheet ? this.assets.get(def.sheet) :
         def.frames?.some(path => this.assets.get(path)))) {
       const message = `${entityId}.${animation}: sprite ausente; usando idle temporariamente.`;
       if (!this.warned.has(message)) {
@@ -47,6 +47,7 @@ export class SpriteRenderer {
 
     const step = this.animations.play(target, key, def, dt, onEvent);
     if (!step) return false;
+    if (Number.isInteger(frameOverride)) step.index = Math.max(0, Math.min((def.frames?.length || def.count || 1) - 1, frameOverride));
     const imagePath = def.frames?.[step.index] || def.sheet;
     const img = this.assets.get(imagePath);
     if (!img) return false;

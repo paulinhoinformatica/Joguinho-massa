@@ -1,1 +1,78 @@
-{"id":"infected_robot","name":"Robô industrial corrompido","scale":0.48,"origin":{"x":64,"y":128},"visual":{"offsetX":0,"offsetY":0},"collision":{"width":38,"height":60,"offsetX":0,"offsetY":0},"facing":-1,"animations":{"idle":{"sheet":"assets/enemies/infected_robot/idle.png","frameWidth":128,"frameHeight":128,"columns":4,"count":4,"fps":6,"loop":true},"run":{"sheet":"assets/enemies/infected_robot/run.png","frameWidth":128,"frameHeight":128,"columns":6,"count":6,"fps":8,"loop":true},"attack":{"sheet":"assets/enemies/infected_robot/attack.png","frameWidth":192,"frameHeight":128,"columns":6,"count":6,"fps":10,"loop":false,"events":[{"frame":4,"name":"impact"}]},"damage":{"sheet":"assets/enemies/infected_robot/damage.png","frameWidth":128,"frameHeight":128,"columns":3,"count":3,"fps":9,"loop":false},"death":{"sheet":"assets/enemies/infected_robot/death.png","frameWidth":160,"frameHeight":128,"columns":6,"count":6,"fps":8,"loop":false}}}
+{
+  "id": "infected_robot",
+  "name": "Robô industrial corrompido",
+  "scale": 0.48,
+  "origin": {
+    "x": 64,
+    "y": 128
+  },
+  "visual": {
+    "offsetX": 0,
+    "offsetY": 0
+  },
+  "collision": {
+    "width": 38,
+    "height": 60,
+    "offsetX": 0,
+    "offsetY": 0
+  },
+  "facing": -1,
+  "animations": {
+    "idle": {
+      "sheet": "assets/enemies/infected_robot/idle.png",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 4,
+      "count": 4,
+      "fps": 6,
+      "loop": true,
+      "enabled": false
+    },
+    "run": {
+      "sheet": "assets/enemies/infected_robot/run.png",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "count": 6,
+      "fps": 8,
+      "loop": true,
+      "enabled": false
+    },
+    "attack": {
+      "sheet": "assets/enemies/infected_robot/attack.png",
+      "frameWidth": 192,
+      "frameHeight": 128,
+      "columns": 6,
+      "count": 6,
+      "fps": 10,
+      "loop": false,
+      "events": [
+        {
+          "frame": 4,
+          "name": "impact"
+        }
+      ],
+      "enabled": false
+    },
+    "damage": {
+      "sheet": "assets/enemies/infected_robot/damage.png",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 3,
+      "count": 3,
+      "fps": 9,
+      "loop": false,
+      "enabled": false
+    },
+    "death": {
+      "sheet": "assets/enemies/infected_robot/death.png",
+      "frameWidth": 160,
+      "frameHeight": 128,
+      "columns": 6,
+      "count": 6,
+      "fps": 8,
+      "loop": false,
+      "enabled": false
+    }
+  }
+}

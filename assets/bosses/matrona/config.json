@@ -26,7 +26,24 @@
       "count": 1,
       "fps": 1,
       "loop": true,
-      "nativeFacing": -1
+      "nativeFacing": -1,
+      "hand": {
+        "x": 60,
+        "y": 130
+      }
+    },
+    "walk": {
+      "sheet": "assets/bosses/matrona/walk.png",
+      "frameWidth": 254,
+      "frameHeight": 254,
+      "columns": 8,
+      "rows": 1,
+      "count": 8,
+      "fps": 8,
+      "loop": true,
+      "nativeFacing": -1,
+      "scale": 0.5118110236220472,
+      "origin": { "x": 127, "y": 254 }
     },
     "attack": {
       "sheet": "assets/bosses/matrona/attack.png",
@@ -78,6 +95,73 @@
         "x": 96,
         "y": 192
       }
+    },
+    "attack_quarantine": {
+      "sheet": "assets/bosses/matrona/attack_quarantine.png",
+      "frameWidth": 254,
+      "frameHeight": 254,
+      "columns": 6,
+      "rows": 1,
+      "count": 5,
+      "fps": 10,
+      "loop": false,
+      "freezeLast": true,
+      "enabled": true,
+      "scale": 0.5118110236220472,
+      "origin": {
+        "x": 127,
+        "y": 254
+      },
+      "nativeFacing": -1
+    },
+    "attack_beam": {
+      "sheet": "assets/bosses/matrona/attack_beam.png",
+      "columns": 6,
+      "count": 6,
+      "fps": 10,
+      "loop": false,
+      "freezeLast": true,
+      "enabled": true,
+      "nativeFacing": -1,
+      "frameWidth": 254,
+      "frameHeight": 254,
+      "rows": 1,
+      "origin": {
+        "x": 127,
+        "y": 254
+      },
+      "hand": {
+        "x": 22,
+        "y": 62
+      },
+      "hands": [
+        {
+          "x": 122,
+          "y": 130
+        },
+        {
+          "x": 24,
+          "y": 68
+        },
+        {
+          "x": 22,
+          "y": 62
+        },
+        {
+          "x": 22,
+          "y": 62
+        },
+        {
+          "x": 24,
+          "y": 65
+        },
+        {
+          "x": 70,
+          "y": 130
+        }
+      ],
+      "scale": 0.5118110236220472,
+      "holdFrame": 2
     }
   },
   "fallbackAnimation": "idle"

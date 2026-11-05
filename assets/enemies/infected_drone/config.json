@@ -1,1 +1,78 @@
-{"id":"infected_drone","name":"Drone infetado","scale":0.38,"origin":{"x":64,"y":48},"visual":{"offsetX":0,"offsetY":-8},"collision":{"width":38,"height":30,"offsetX":0,"offsetY":0},"facing":-1,"animations":{"idle":{"sheet":"assets/enemies/infected_drone/idle.png","frameWidth":128,"frameHeight":96,"columns":4,"count":4,"fps":8,"loop":true},"run":{"sheet":"assets/enemies/infected_drone/flight.png","frameWidth":128,"frameHeight":96,"columns":6,"count":6,"fps":12,"loop":true},"attack":{"sheet":"assets/enemies/infected_drone/attack.png","frameWidth":160,"frameHeight":96,"columns":5,"count":5,"fps":12,"loop":false,"events":[{"frame":3,"name":"fire"}]},"damage":{"sheet":"assets/enemies/infected_drone/damage.png","frameWidth":128,"frameHeight":96,"columns":2,"count":2,"fps":10,"loop":false},"death":{"sheet":"assets/enemies/infected_drone/death.png","frameWidth":128,"frameHeight":96,"columns":5,"count":5,"fps":9,"loop":false}}}
+{
+  "id": "infected_drone",
+  "name": "Drone infetado",
+  "scale": 0.38,
+  "origin": {
+    "x": 64,
+    "y": 48
+  },
+  "visual": {
+    "offsetX": 0,
+    "offsetY": -8
+  },
+  "collision": {
+    "width": 38,
+    "height": 30,
+    "offsetX": 0,
+    "offsetY": 0
+  },
+  "facing": -1,
+  "animations": {
+    "idle": {
+      "sheet": "assets/enemies/infected_drone/idle.png",
+      "frameWidth": 128,
+      "frameHeight": 96,
+      "columns": 4,
+      "count": 4,
+      "fps": 8,
+      "loop": true,
+      "enabled": false
+    },
+    "run": {
+      "sheet": "assets/enemies/infected_drone/flight.png",
+      "frameWidth": 128,
+      "frameHeight": 96,
+      "columns": 6,
+      "count": 6,
+      "fps": 12,
+      "loop": true,
+      "enabled": false
+    },
+    "attack": {
+      "sheet": "assets/enemies/infected_drone/attack.png",
+      "frameWidth": 160,
+      "frameHeight": 96,
+      "columns": 5,
+      "count": 5,
+      "fps": 12,
+      "loop": false,
+      "events": [
+        {
+          "frame": 3,
+          "name": "fire"
+        }
+      ],
+      "enabled": false
+    },
+    "damage": {
+      "sheet": "assets/enemies/infected_drone/damage.png",
+      "frameWidth": 128,
+      "frameHeight": 96,
+      "columns": 2,
+      "count": 2,
+      "fps": 10,
+      "loop": false,
+      "enabled": false
+    },
+    "death": {
+      "sheet": "assets/enemies/infected_drone/death.png",
+      "frameWidth": 128,
+      "frameHeight": 96,
+      "columns": 5,
+      "count": 5,
+      "fps": 9,
+      "loop": false,
+      "enabled": false
+    }
+  }
+}

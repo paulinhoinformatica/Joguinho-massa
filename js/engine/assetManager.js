@@ -4,6 +4,7 @@ export class AssetManager{
  prepareAnimation(id,name,a){
   if(!a.sheet)return;
   const img=this.get(a.sheet);if(!img)return;
+  a.ready=true;
   const columns=a.columns||(a.frameWidth?Math.floor(img.naturalWidth/a.frameWidth):a.count),rows=a.rows||(a.frameHeight?Math.floor(img.naturalHeight/a.frameHeight):Math.ceil(a.count/columns));
   a.columns=columns;a.rows=rows;
   a.frameWidth??=img.naturalWidth/columns;a.frameHeight??=img.naturalHeight/rows;
