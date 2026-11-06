@@ -1,0 +1,140 @@
+<!doctype html><meta charset="utf-8"><pre id="results">RUNNING</pre><canvas width="960" height="540"></canvas><script type="module">
+import {buildMap,REGIONS,ROOM_W,WORLD_W,GROUND,MATRONA_ARENA,roomAt} from '../js/map.js';
+import {createPlayer,updatePlayer} from '../js/player.js';
+import {activateHook,nearestHook} from '../js/hook.js';
+import {createBosses,updateBoss,damageBoss} from '../js/bosses.js';
+import {resetMatrona,MATRONA_TIMING,segmentHitsBox} from '../js/matrona.js';
+import {Engine,newState} from '../js/engine.js';
+import {checkpointFor,syncProgress} from '../js/campaign.js';
+import {normalizeSave,saveGame,loadGame} from '../js/save.js';
+import {updateLevelPlatforms} from '../js/level-platforms.js';
+import {spawnEnemies} from '../js/enemies.js';
+import {Camera} from '../js/camera.js';
+import {AssetManager} from '../js/engine/assetManager.js';
+import {AnimationManager} from '../js/engine/animationManager.js';
+import {SpriteRenderer} from '../js/engine/spriteRenderer.js';
+import {World} from '../js/world.js';
+import {ASSET_MANIFEST} from '../js/config/assets.js';
+const results=[],check=(s,b)=>{if(!b)throw Error(s);results.push('PASS '+s)};
+if(location.search.includes('preview'))document.querySelector('#results').style.display='none';
+const abilities={hook:true,dash:false,doubleJump:false},map=buildMap();
+try{
+const base=document.createElement('base');base.href=new URL('../',location.href);document.head.append(base);
+check('limites dos mapas preservados',ROOM_W===2400&&WORLD_W===7200&&REGIONS.map(r=>r.x).join()==='0,2400,4800');
+check('tres areas com limites proprios',roomAt(690)===0&&roomAt(710)===1&&roomAt(1410)===2&&roomAt(2401)===3);
+check('navegacao vertical ampliada',map.platforms.filter(s=>s.x<1400&&s.y<600).length>=8&&map.platforms.some(s=>s.x===1220&&s.y===215));
+check('apenas os dois mobs anteriores',spawnEnemies().filter(e=>e.room===0).map(e=>e.type).join()==='patrol,servant_shooter');
+check('pre boss sem mobs',spawnEnemies().filter(e=>e.room===0).every(e=>e.homeX<1350));
+for(const fps of [30,60,120]){
+ const p={...createPlayer(),y:736,grounded:true};let visitedYara=false,visitedOren=false,checkpoint=false;
+ for(let i=0;i<fps*12&&p.x<1540;i++){
+  const obstacle=map.platforms.find(s=>s.kind==='cover'&&s.x>p.x&&s.x-p.x<105);
+  updatePlayer(p,{right:true,jump:!!obstacle&&p.grounded,platforms:map.platforms},1/fps,abilities);
+  visitedYara ||= Math.abs(p.x-610)<30;visitedOren ||= Math.abs(p.x-1000)<30;checkpoint ||= Math.abs(p.x-1440)<30;
+ }
+ check('percurso do inicio a arena '+fps,p.x>=1540&&visitedYara&&visitedOren&&checkpoint);
+ check('sem habilidades pos Matrona',!abilities.dash&&!abilities.doubleJump);
+ // Real normal-jump arc, including gravity and discrete integration.
+ const jumper={...createPlayer(),x:50,y:736,grounded:true};let top=790;
+ for(let i=0;i<fps;i++){updatePlayer(jumper,{jump:i===0,platforms:[map.platforms[0]]},1/fps,abilities);top=Math.min(top,jumper.y+jumper.h)}
+ check('altura real salto '+fps,790-top>105&&790-top<120);
+ // Ascend via the original useful hook, then climb to the upper secret.
+ const h={...createPlayer(),x:610,y:736,grounded:true};activateHook(h,nearestHook(h,map.hookPoints));let landed=false;
+ for(let i=0;i<fps*2;i++){updatePlayer(h,{platforms:map.platforms},1/fps,abilities);if(h.grounded&&h.y+h.h<700){landed=true;break}}
+ check('gancho inicial chega ao telhado '+fps,landed&&h.y+h.h===580);
+ for(const [x,y,targetX,targetY] of [[700,580,740,485],[825,485,910,395],[1140,395,1070,290],[1150,290,1250,215]]){
+  const a={...createPlayer(),x,y:y-54,grounded:true,vx:0};const sign=Math.sign(targetX-x);let ok=false;
+  for(let i=0;i<fps*1.2;i++){
+   const dir=Math.abs(a.x-targetX)>8?Math.sign(targetX-a.x):0;
+   updatePlayer(a,{jump:i===0,right:dir>0,left:dir<0,platforms:map.platforms},1/fps,abilities);
+   if(a.grounded&&Math.abs(a.y+a.h-targetY)<1){ok=true;break}
+  }
+  check('salto entre telhados '+x+'/'+fps,ok);
+ }
+ const unstable=buildMap(),s=unstable.platforms.find(q=>q.kind==='unstable'),rider={...createPlayer(),x:s.x+20,y:s.y-54,grounded:true};
+ updateLevelPlatforms(unstable,rider,.3);check('aviso instavel '+fps,s.warning>0&&!s.disabled);
+ updateLevelPlatforms(unstable,rider,.36);check('desaba apos aviso '+fps,s.disabled);
+ for(let i=0;i<fps*2;i++)updatePlayer(rider,{platforms:unstable.platforms},1/fps,abilities);
+ check('queda tem piso seguro '+fps,rider.grounded&&rider.y+rider.h<=790);
+ updateLevelPlatforms(unstable,rider,4.1);check('plataforma reaparece '+fps,!s.disabled);
+}
+const bridge=map.terminals.find(t=>t.id==='shortcut-sector9');check('ponte recolhida',!map.platforms.some(p=>p.id==='s9-bridge'));
+const state=newState();state.abilities.hook=true;state.player.x=bridge.x-15;state.player.y=bridge.y-54;
+const fake={state,world:{map:buildMap()},ui:{toast(){},showDialog(){},update(){}},paused:false};
+Engine.prototype.interact.call(fake);check('terminal estende ponte e registra evento',state.events.includes(bridge.id)&&fake.world.map.platforms.some(p=>p.id==='s9-bridge'));
+Engine.prototype.interact.call(fake);check('nao duplica ponte',fake.world.map.platforms.filter(p=>p.id==='s9-bridge').length===1);
+check('ponte reconstruida por evento',buildMap(state.events).platforms.some(p=>p.id==='s9-bridge'));
+saveGame(state);check('ponte persiste em save e load',loadGame().events.includes(bridge.id));
+const crossing={...createPlayer(),x:1020,y:395-54,grounded:true};for(let i=0;i<48;i++)updatePlayer(crossing,{right:true,platforms:buildMap(state.events).platforms},1/60,abilities);
+check('ponte permite atravessar andando',crossing.x>1140&&crossing.y+crossing.h===395);
+check('recompensa opcional acessivel',map.secrets.some(s=>s.item==='Peças da vigilância 09'&&map.platforms.some(p=>p.x<s.x&&p.x+p.w>s.x&&p.y===s.y)));
+const reward=newState(),secret=map.secrets.find(s=>s.item==='Peças da vigilância 09');reward.player.x=secret.x-15;reward.player.y=secret.y-54;
+Engine.prototype.interact.call({state:reward,world:{map},ui:{toast(){}}});check('segredo opcional concede recompensa',reward.items.includes(secret.item)&&reward.credits===60);
+for(const id of ['yara','oren-slum']){const npc=map.npcs.find(n=>n.id===id);check('NPC acessivel '+id,npc.y===790&&npc.x<MATRONA_ARENA.left)}
+check('checkpoint fora da arena',checkpointFor(0,true).x===1440&&map.checkpoints.some(c=>c.x===1440)&&1440+30<MATRONA_ARENA.left);
+const old=newState();delete old.sector9Layout;old.checkpoint={x:1580,y:733,region:0};old.credits=123;old.events.push(bridge.id);old.items.push('peça antiga');
+const loaded=normalizeSave(JSON.parse(JSON.stringify(old)));check('migra checkpoint preservando dados',loaded.checkpoint.x===1440&&loaded.credits===123&&loaded.items.includes('peça antiga')&&loaded.events.includes(bridge.id));
+old.player.x=1580;const waiting=normalizeSave(JSON.parse(JSON.stringify(old)));check('save antigo na antecamara nao inicia luta ao carregar',waiting.player.x===1440&&waiting.player.x+waiting.player.w<MATRONA_ARENA.left);
+for(const x of [2700,5100]){const later=newState();later.player.x=x;later.player.y=736;later.bosses.forEach(b=>b.dead=true);check('mapa posterior sem deslocamento '+x,normalizeSave(later).player.x===x)}
+let legacySafe=true;
+for(let region=0;region<5;region++)for(let progress=0;progress<4;progress++){
+ const saved=newState();saved.version=1;delete saved.sector9Layout;saved.player.x=region*2400+200;saved.player.y=736;saved.credits=123;saved.items=['peça antiga'];saved.abilities.hook=true;
+ saved.bosses=[{id:'boss-0',dead:progress>=1},{id:'boss-1',dead:true},{id:'boss-2',dead:progress>=2},{id:'boss-3',dead:progress>=3}];
+ saved.checkpoint={x:region*2400+180,region};const migrated=normalizeSave(saved);
+ legacySafe&&=migrated?.credits===123&&migrated.abilities.hook&&migrated.items.includes('peça antiga')&&migrated.player.x>=0&&migrated.player.x<7200&&map.checkpoints.some(c=>c.x===migrated.checkpoint.x);
+}
+check('20 migracoes de saves legados preservam progresso',legacySafe);
+const solidSave=newState();solidSave.player.x=960;solidSave.player.y=736;check('save antigo nao carrega dentro de cobertura',normalizeSave(solidSave).player.y===718-54);
+const b=createBosses()[0],p={...createPlayer(),x:1540,y:736,grounded:true};check('arena ampla',b.arena.right-b.arena.left===850);
+check('entrada ativa Matrona',updateBoss(b,p,.016,{platforms:map.platforms})?.kind==='intro');
+for(const x of [1400,2450]){p.x=x;Engine.prototype.checkGates.call({state:{...newState(),player:p,bosses:[b]},ui:{toast(){}}});check('barreira fisica '+x,p.x>=b.arena.left&&p.x+p.w<=b.arena.right)}
+const cam=new Camera();cam.arena=b.arena;for(let i=0;i<180;i++)cam.update(p,960,540,7200,900,1/60);check('arena inteira enquadrada',cam.x<=b.arena.left&&cam.x+960>=b.arena.right);
+for(const side of ['arena-left','arena-right']){
+ const platform=map.platforms.find(s=>s.id===side);p.x=platform.x+2;p.y=platform.y-54;p.health=100;
+ resetMatrona(b);b.matronaState='quarantine_cast';b.timer=.001;updateBoss(b,p,.016,{platforms:map.platforms});
+ check('quarentena atinge plataforma '+side,b.zones.some(z=>z.y+z.h===platform.y&&p.x+p.w>z.x&&p.x<z.x+z.w));
+ check('zonas dentro da arena e em superficies',b.zones.every(z=>z.x>=b.arena.left&&z.x+z.w<=b.arena.right&&map.platforms.some(s=>s.x<=z.x&&s.x+s.w>=z.x+z.w&&s.y===z.y+z.h)));
+ check('quarentena avisa antes do dano',p.health===100&&b.matronaState==='quarantine_warning');
+ p.invuln=0;while(['quarantine_warning','quarantine_strike'].includes(b.matronaState))updateBoss(b,p,1/60,{platforms:map.platforms});
+ check('descarga coincide com a plataforma '+side,p.health===89);
+ p.health=100;p.invuln=0;resetMatrona(b);b.matronaState='beam_telegraph';b.timer=.7;
+ while(['beam_telegraph','beam_lock','beam_fire'].includes(b.matronaState))updateBoss(b,p,1/60,{platforms:map.platforms});
+ check('plataforma nao torna imune ao raio '+side,p.health===88);
+}
+p.x=1820;p.y=736;p.health=100;p.invuln=0;resetMatrona(b);b.matronaState='beam_telegraph';b.timer=MATRONA_TIMING.beamTrack;
+while(b.matronaState==='beam_telegraph')updateBoss(b,p,1/60,{platforms:map.platforms});const beam=JSON.stringify(b.beam);p.x=1630;
+while(['beam_lock','beam_fire'].includes(b.matronaState))updateBoss(b,p,1/60,{platforms:map.platforms});check('raio travado e desvio sem dash',JSON.stringify(b.beam)===beam&&p.health===100);
+resetMatrona(b);b.timer=20;b.active=true;p.x=1700;p.y=736;
+let confined=true;for(let i=0;i<600;i++){updateBoss(b,p,1/60,{platforms:map.platforms});confined&&=b.x>=b.arena.left+16&&b.x+b.w<=b.arena.right-16&&b.y+b.h===790}check('boss no piso e dentro dos limites',confined);
+b.health=1;b.hitCooldown=0;b.attackType='recovery';p.attackTimer=.2;p.state='attack';p.attackBox={...b};p.attackHitConsumed=false;p.externalAttackAnimation=false;p.combo=0;
+check('Matrona pode ser derrotada',damageBoss(b,p));
+const victory=newState();victory.bosses[0]=b;const engine={state:victory,ui:{toast(){},update(){},showDialog(){}},keys:new Set(),pressed:new Set()};
+Engine.prototype.finishBoss.call(engine,b);check('recompensa e progressao mantidas',victory.events.includes('victory-boss-0')&&victory.abilities.dash&&victory.abilities.doubleJump&&victory.credits===90);
+victory.player.x=2420;Engine.prototype.checkGates.call({state:victory,ui:{toast(){}}});check('saida para industrial liberada',victory.player.x===2420);
+// Real Canvas render using the game renderer, not a static diagram.
+const assets=new AssetManager(ASSET_MANIFEST);await assets.loadRegion('slums');const renderer=new SpriteRenderer(assets,new AnimationManager());
+const world=new World();const preview=newState();preview.player.x=1740;preview.player.y=736;preview.bosses[0].active=true;
+const roofPreview=location.search.includes('roofs');
+if(roofPreview){preview.player.x=940;preview.player.y=341;preview.bosses[0].active=false;preview.abilities.hook=true;world.map=buildMap(['shortcut-sector9'])}
+world.draw(document.querySelector('canvas').getContext('2d'),{width:960,height:540},roofPreview?{x:480,y:100}:{x:1455,y:310},preview,spawnEnemies(),{assets,spriteRenderer:renderer,dt:0});
+check('render real sem erros de assets',assets.errors.length===0);
+// Open the actual game UI as well as testing the modules directly.
+const frame=document.createElement('iframe');frame.style.display='none';const ready=new Promise(r=>frame.onload=r);frame.src=new URL('../index.html',location.href);document.body.append(frame);await ready;
+const errors=[];frame.contentWindow.addEventListener('error',e=>errors.push(e.message));frame.contentWindow.addEventListener('unhandledrejection',e=>errors.push(String(e.reason)));
+const engineURL=new URL('../js/engine.js',location.href).href,uiURL=new URL('../js/ui.js',location.href).href;
+const live=await frame.contentWindow.eval(`(async()=>{
+ const {Engine,newState}=await import(${JSON.stringify(engineURL)}),{UI}=await import(${JSON.stringify(uiURL)});
+ document.querySelector('#new-game').click();document.querySelector('#pause-open').click();
+ const e=new Engine(document.querySelector('#game'),newState(),new UI());await e.assets.loadRegion('slums');e.applyAssetCollisionConfigs();
+ for(const id of ['yara','oren-slum']){const n=e.world.map.npcs.find(n=>n.id===id);e.state.player.x=n.x-15;e.state.player.y=736;e.interact();e.closeDialog()}
+ const npcs=e.state.events.includes('npc-yara')&&e.state.events.includes('npc-oren-slum')&&e.state.abilities.hook;
+ e.state.player.x=1430;e.state.player.y=736;e.interact();const cp=e.state.checkpoint.x===1440;
+ e.state.player.x=1540;e.state.player.y=736;e.paused=false;e.update(1/60);
+ const boss=e.state.bosses[0].active&&e.paused&&!document.querySelector('#dialog-screen').classList.contains('hidden');
+ e.respawn();const respawn=e.state.player.x===1440&&!e.state.bosses[0].active;e.paused=true;return {npcs,cp,boss,respawn,failed:e.assets.status().failed};
+})()`);
+check('jogo real interage com Yara e Oren',live.npcs);check('jogo real ativa checkpoint pre boss',live.cp);check('jogo real inicia batalha e dialogo',live.boss);check('jogo real sem erros de console ou loading',errors.length===0&&live.failed===0);
+check('jogo real respawn seguro fora da arena',live.respawn);
+document.querySelector('#results').textContent=results.join('\n')+'\nALL PASS';
+}catch(e){document.querySelector('#results').textContent=results.join('\n')+'\nFAIL '+e.stack}
+</script>

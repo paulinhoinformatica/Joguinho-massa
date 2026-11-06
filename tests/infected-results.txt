@@ -1,6 +1,23 @@
 PASS idle/walk carregados sem erros
 PASS dimensoes reais
 PASS quatro quadros e loop
+PASS config de inimigo na pasta principal servant_shooter
+PASS PNG habilitado carregado assets/enemies/servant_shooter/idle.png
+PASS config de inimigo na pasta principal implanted_infected
+PASS PNG habilitado carregado assets/enemies/infected/idle.png
+PASS PNG habilitado carregado assets/enemies/infected/walk.png
+PASS config de inimigo na pasta principal cyborg_soldier
+PASS config de inimigo na pasta principal infected_drone
+PASS config de inimigo na pasta principal infected_robot
+PASS todos inimigos sem falhas de carregamento
+PASS inimigo visivel 0-800-patrol
+PASS inimigo visivel 0-1420-maintenance
+PASS inimigo visivel 1-600-maintenance
+PASS inimigo visivel 1-1150-executor
+PASS inimigo visivel 1-1480-drone
+PASS inimigo visivel 2-500-shooter
+PASS inimigo visivel 2-1100-sentinel
+PASS inimigo visivel 2-1480-heavy
 PASS invulnerabilidade de Kael
 PASS pousa em plataforma
 PASS morte por cajado

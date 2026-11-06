@@ -1,0 +1,85 @@
+PASS limites dos mapas preservados
+PASS tres areas com limites proprios
+PASS navegacao vertical ampliada
+PASS apenas os dois mobs anteriores
+PASS pre boss sem mobs
+PASS percurso do inicio a arena 30
+PASS sem habilidades pos Matrona
+PASS altura real salto 30
+PASS gancho inicial chega ao telhado 30
+PASS salto entre telhados 700/30
+PASS salto entre telhados 825/30
+PASS salto entre telhados 1140/30
+PASS salto entre telhados 1150/30
+PASS aviso instavel 30
+PASS desaba apos aviso 30
+PASS queda tem piso seguro 30
+PASS plataforma reaparece 30
+PASS percurso do inicio a arena 60
+PASS sem habilidades pos Matrona
+PASS altura real salto 60
+PASS gancho inicial chega ao telhado 60
+PASS salto entre telhados 700/60
+PASS salto entre telhados 825/60
+PASS salto entre telhados 1140/60
+PASS salto entre telhados 1150/60
+PASS aviso instavel 60
+PASS desaba apos aviso 60
+PASS queda tem piso seguro 60
+PASS plataforma reaparece 60
+PASS percurso do inicio a arena 120
+PASS sem habilidades pos Matrona
+PASS altura real salto 120
+PASS gancho inicial chega ao telhado 120
+PASS salto entre telhados 700/120
+PASS salto entre telhados 825/120
+PASS salto entre telhados 1140/120
+PASS salto entre telhados 1150/120
+PASS aviso instavel 120
+PASS desaba apos aviso 120
+PASS queda tem piso seguro 120
+PASS plataforma reaparece 120
+PASS ponte recolhida
+PASS terminal estende ponte e registra evento
+PASS nao duplica ponte
+PASS ponte reconstruida por evento
+PASS ponte persiste em save e load
+PASS ponte permite atravessar andando
+PASS recompensa opcional acessivel
+PASS segredo opcional concede recompensa
+PASS NPC acessivel yara
+PASS NPC acessivel oren-slum
+PASS checkpoint fora da arena
+PASS migra checkpoint preservando dados
+PASS save antigo na antecamara nao inicia luta ao carregar
+PASS mapa posterior sem deslocamento 2700
+PASS mapa posterior sem deslocamento 5100
+PASS 20 migracoes de saves legados preservam progresso
+PASS save antigo nao carrega dentro de cobertura
+PASS arena ampla
+PASS entrada ativa Matrona
+PASS barreira fisica 1400
+PASS barreira fisica 2450
+PASS arena inteira enquadrada
+PASS quarentena atinge plataforma arena-left
+PASS zonas dentro da arena e em superficies
+PASS quarentena avisa antes do dano
+PASS descarga coincide com a plataforma arena-left
+PASS plataforma nao torna imune ao raio arena-left
+PASS quarentena atinge plataforma arena-right
+PASS zonas dentro da arena e em superficies
+PASS quarentena avisa antes do dano
+PASS descarga coincide com a plataforma arena-right
+PASS plataforma nao torna imune ao raio arena-right
+PASS raio travado e desvio sem dash
+PASS boss no piso e dentro dos limites
+PASS Matrona pode ser derrotada
+PASS recompensa e progressao mantidas
+PASS saida para industrial liberada
+PASS render real sem erros de assets
+PASS jogo real interage com Yara e Oren
+PASS jogo real ativa checkpoint pre boss
+PASS jogo real inicia batalha e dialogo
+PASS jogo real sem erros de console ou loading
+PASS jogo real respawn seguro fora da arena
+ALL PASS

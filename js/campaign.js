@@ -1,4 +1,4 @@
-import{REGIONS,ROOM_W,GROUND,regionAt}from'./map.js';
+import{REGIONS,ROOM_W,GROUND,regionAt,roomAt}from'./map.js';
 import{awardAbility}from'./abilities.js';
 
 export const ACTS=[
@@ -8,7 +8,7 @@ export const ACTS=[
 ];
 export function defeated(state,id){return state.bosses.some(b=>b.id===id&&b.dead)}
 export function unlockedAct(state){return defeated(state,'boss-0')?(defeated(state,'boss-2')?2:1):0}
-export function checkpointFor(region=0,beforeBoss=false){const i=Math.max(0,Math.min(2,region));return{x:i*ROOM_W+(beforeBoss?1580:i===0?310:i===1?170:190),y:GROUND-57,region:i,name:beforeBoss?['Oficina do bloqueio','Manutenção de segurança','Abrigo do núcleo'][i]:['Abrigo da Chuva','Gerador auxiliar','Elevador de serviço'][i]}}
+export function checkpointFor(region=0,beforeBoss=false){const i=Math.max(0,Math.min(2,region));return{x:i*ROOM_W+(beforeBoss?(i===0?1440:1580):i===0?310:i===1?170:190),y:GROUND-57,region:i,name:beforeBoss?['Oficina do bloqueio','Manutenção de segurança','Abrigo do núcleo'][i]:['Abrigo da Chuva','Gerador auxiliar','Elevador de serviço'][i]}}
 export function syncProgress(state){
  state.quests=ACTS.map(a=>({id:a.id,name:a.name,goal:1,progress:defeated(state,a.boss)?1:0,complete:defeated(state,a.boss)}));
  state.quests.push({id:'records',name:'Opcional · Recuperar os três registros da Aurora',goal:3,progress:['log-1','log-2','log-3'].filter(id=>state.events.includes(id)).length,complete:['log-1','log-2','log-3'].every(id=>state.events.includes(id))});
@@ -20,7 +20,7 @@ export function syncProgress(state){
  if(defeated(state,'boss-3')&&!state.events.includes('ending'))state.events.push('ending');
  state.region=regionAt(state.player.x).id;
  state.currentMap=REGIONS.indexOf(regionAt(state.player.x));
- state.currentRoom=Math.max(0,Math.min(8,Math.floor(state.player.x/800)));
+ state.currentRoom=roomAt(state.player.x);
 }
 export function objective(state){
  if(state.events.includes('ending'))return 'Transmissão interrompida · Nova Aurora começa a se recuperar';

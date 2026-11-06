@@ -1,0 +1,65 @@
+PASS PNG original 128x128 e sem erros
+PASS substitui somente spawn do Setor 9
+PASS outros inimigos preservados
+PASS vida dano e colisor
+PASS detecta prepara sem dano 30/-1
+PASS preparacao estacionaria
+PASS tiro acerta uma vez 30/-1
+PASS boca da arma acompanha direcao
+PASS cajado e hurtbox do corpo
+PASS dano cancela preparacao
+PASS morto nao atira e limpa projeteis
+PASS detecta prepara sem dano 30/1
+PASS preparacao estacionaria
+PASS tiro acerta uma vez 30/1
+PASS boca da arma acompanha direcao
+PASS cajado e hurtbox do corpo
+PASS dano cancela preparacao
+PASS morto nao atira e limpa projeteis
+PASS detecta prepara sem dano 60/-1
+PASS preparacao estacionaria
+PASS tiro acerta uma vez 60/-1
+PASS boca da arma acompanha direcao
+PASS cajado e hurtbox do corpo
+PASS dano cancela preparacao
+PASS morto nao atira e limpa projeteis
+PASS detecta prepara sem dano 60/1
+PASS preparacao estacionaria
+PASS tiro acerta uma vez 60/1
+PASS boca da arma acompanha direcao
+PASS cajado e hurtbox do corpo
+PASS dano cancela preparacao
+PASS morto nao atira e limpa projeteis
+PASS detecta prepara sem dano 120/-1
+PASS preparacao estacionaria
+PASS tiro acerta uma vez 120/-1
+PASS boca da arma acompanha direcao
+PASS cajado e hurtbox do corpo
+PASS dano cancela preparacao
+PASS morto nao atira e limpa projeteis
+PASS detecta prepara sem dano 120/1
+PASS preparacao estacionaria
+PASS tiro acerta uma vez 120/1
+PASS boca da arma acompanha direcao
+PASS cajado e hurtbox do corpo
+PASS dano cancela preparacao
+PASS morto nao atira e limpa projeteis
+PASS invulnerabilidade respeitada
+PASS parede bloqueia deteccao
+PASS parede bloqueia bala
+PASS roda respeita borda
+PASS giro deriva do deslocamento
+PASS roda compensa espelhamento -1
+PASS roda parada em idle -1
+PASS roda compensa espelhamento 1
+PASS roda parada em idle 1
+PASS render idle sem alterar fisica
+PASS sprite visivel idle
+PASS render patrol sem alterar fisica
+PASS sprite visivel patrol
+PASS render attack sem alterar fisica
+PASS sprite visivel attack
+PASS render hurt sem alterar fisica
+PASS sprite visivel hurt
+PASS fallback sem PNG
+ALL PASS

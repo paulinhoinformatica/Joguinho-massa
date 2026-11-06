@@ -1,0 +1,57 @@
+<!doctype html><meta charset="utf-8"><style>body{background:#101820;color:#ddd}canvas{image-rendering:pixelated;width:960px;height:320px}</style><pre id="results">RUNNING</pre><canvas width="480" height="160"></canvas><script type="module">
+import {spawnEnemies,updateEnemies,renderEnemy} from '../js/enemies.js';
+import {updateServant,servantMuzzle,drawServant} from '../js/servant-shooter.js';
+import {enemyAttackBox} from '../js/sector9-enemies.js';
+import {enemyHurtbox,playerDamage} from '../js/combat.js';
+import {AssetManager} from '../js/engine/assetManager.js';
+import {AnimationManager} from '../js/engine/animationManager.js';
+import {SpriteRenderer} from '../js/engine/spriteRenderer.js';
+import {ASSET_MANIFEST} from '../js/config/assets.js';
+const results=[],check=(s,b)=>{if(!b)throw Error(s);results.push('PASS '+s)};
+if(location.search.includes('preview')){document.querySelector('#results').style.display='none'}
+try{
+const base=document.createElement('base');base.href=new URL('../',location.href);document.head.append(base);
+const assets=new AssetManager(ASSET_MANIFEST);await assets.loadRegion('slums');
+const renderer=new SpriteRenderer(assets,new AnimationManager()),cfg=assets.getConfig('servant_shooter');
+check('PNG original 128x128 e sem erros',renderer.available('servant_shooter','idle')&&assets.get(cfg.animations.idle.sheet).naturalWidth===128&&assets.errors.length===0);
+const spawn=spawnEnemies(),source=spawn.find(e=>e.type==='servant_shooter');
+check('substitui somente spawn do Setor 9',source.room===0&&source.x===1120&&source.id==='0-1420-maintenance'&&spawn.length===8&&spawn.filter(e=>e.type==='servant_shooter').length===1);
+check('outros inimigos preservados',spawn[0].type==='patrol'&&spawn[2].type==='maintenance'&&spawn[4].type==='drone'&&spawn[5].type==='shooter');
+check('vida dano e colisor',source.health===48&&source.damage===13&&source.w===24&&source.h===57);
+const floor={map:{platforms:[{x:0,y:790,w:2400,h:100}]}},make=()=>({...source,x:800,homeX:800,y:733,grounded:true,attackCooldown:0,patrolBounds:undefined,projectiles:[]});
+for(const fps of [30,60,120])for(const facing of [-1,1]){
+ const dt=1/fps,e=make(),p={x:800+facing*150,y:736,w:30,h:54,health:100,invuln:0};
+ updateEnemies([e],p,dt,floor);check('detecta prepara sem dano '+fps+'/'+facing,e.detected&&e.shotTimer>0&&e.facing===facing&&p.health===100&&!enemyAttackBox(e));
+ const pos=e.x;for(let i=0;i<Math.floor(.25*fps);i++)updateEnemies([e],p,dt,floor);
+ check('preparacao estacionaria',e.x===pos&&p.health===100);
+ for(let i=0;i<Math.ceil(.8*fps);i++)updateEnemies([e],p,dt,floor);
+ check('tiro acerta uma vez '+fps+'/'+facing,p.health===87&&e.projectiles.length===0);
+ const m=servantMuzzle(e);check('boca da arma acompanha direcao',Math.sign(m.x-(e.x+e.w/2))===facing);
+ const h=enemyHurtbox(e);check('cajado e hurtbox do corpo',h.w===24&&h.h===57&&playerDamage({state:'attack',attackTimer:.2,attackBox:h,combo:1,facing},e)&&e.health===26);
+ updateEnemies([e],p,dt,floor);check('dano cancela preparacao',!e.shotTimer);
+ const death=make();death.shotTimer=.1;death.projectiles.push({x:0,y:0,vx:330,life:1});death.dead=true;death.respawn=30;updateEnemies([death],p,dt,floor);check('morto nao atira e limpa projeteis',death.projectiles.length===0);
+}
+const immune=make(),p={x:900,y:736,w:30,h:54,health:100,invuln:1};immune.projectiles=[{x:895,y:750,vx:330,life:1,damage:13}];immune.attackCooldown=9;updateServant(immune,p,.03,floor);check('invulnerabilidade respeitada',p.health===100&&immune.projectiles.length===0);
+const wallWorld={map:{platforms:[...floor.map.platforms,{x:860,y:650,w:40,h:140}]}},wall=make();
+updateServant(wall,{...p,invuln:0},.016,wallWorld);check('parede bloqueia deteccao',!wall.detected);
+wall.projectiles=[{x:835,y:750,vx:330,life:1,damage:13}];const behind={...p,health:100,invuln:0};updateServant(wall,behind,.2,wallWorld);check('parede bloqueia bala',wall.projectiles.length===0&&behind.health===100);
+const edge=make();edge.x=874;edge.facing=1;edge.attackCooldown=9;
+for(let i=0;i<60;i++)updateServant(edge,{...p,x:2000},1/60,{map:{platforms:[{x:0,y:790,w:900,h:100}]}});
+check('roda respeita borda',edge.x+edge.w<=900&&edge.y+edge.h===790);
+const roll=make();roll.attackCooldown=9;for(let i=0;i<20;i++)updateServant(roll,{...p,x:2000},1/60,floor);check('giro deriva do deslocamento',Math.abs(roll.wheelAngle)>0);
+for(const facing of [-1,1]){
+ const angles=[],probe=new Proxy({rotate(v){angles.push(v)}},{get(o,k){return k in o?o[k]:()=>{}}}),e=make();e.facing=facing;e.vx=facing*48;e.wheelAngle=facing*.75;
+ drawServant(probe,e,{x:0,y:0},renderer,0);check('roda compensa espelhamento '+facing,angles[1]===.75);
+ e.vx=0;angles.length=0;drawServant(probe,e,{x:0,y:0},renderer,0);check('roda parada em idle '+facing,angles.length===1);
+}
+const canvas=document.querySelector('canvas'),c=canvas.getContext('2d');
+for(const [index,phase] of ['idle','patrol','attack','hurt'].entries()){
+ const e=make();e.x=50+index*110;e.y=65;e.state=phase;e.facing=index%2?-1:1;e.animTime=1.3;e.vx=phase==='patrol'?-48:0;e.wheelAngle=1;e.hurtTimer=phase==='hurt'?.2:0;e.detected=phase==='attack';e.shotTimer=phase==='attack'?.2:0;
+ const before=JSON.stringify({x:e.x,y:e.y,w:e.w,h:e.h});renderEnemy(c,e,{x:0,y:0},renderer,.016);
+ check('render '+phase+' sem alterar fisica',before===JSON.stringify({x:e.x,y:e.y,w:e.w,h:e.h}));
+ check('sprite visivel '+phase,c.getImageData(e.x-10,e.y,50,60).data.some((v,i)=>i%4===3&&v>0));
+}
+const fallback=make();fallback.x=10;fallback.y=10;assets.records.get(cfg.animations.idle.sheet).status='error';renderEnemy(c,fallback,{x:0,y:0},renderer);check('fallback sem PNG',true);
+document.querySelector('#results').textContent=results.join('\n')+'\nALL PASS';
+}catch(e){document.querySelector('#results').textContent=results.join('\n')+'\nFAIL '+e.stack}
+</script>

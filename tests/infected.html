@@ -17,6 +17,21 @@ check('idle/walk carregados sem erros',assets.status().failed===0&&renderer.avai
 check('dimensoes reais',assets.get(cfg.animations.idle.sheet).naturalWidth===128&&assets.get(cfg.animations.walk.sheet).naturalWidth===512);
 const t={},frames=[];for(let i=0;i<5;i++)frames.push(am.play(t,'walk',cfg.animations.walk,i?1/6:0).index);
 check('quatro quadros e loop',frames.join()==='0,1,2,3,0');
+const enemyIds=['servant_shooter','implanted_infected','cyborg_soldier','infected_drone','infected_robot'];
+await Promise.all(enemyIds.map(id=>assets.loadEntity(id)));
+for(const id of enemyIds){
+ check('config de inimigo na pasta principal '+id,ASSET_MANIFEST.entities[id].config.startsWith('assets/enemies/')&&!!assets.getConfig(id));
+ for(const animation of Object.values(assets.getConfig(id).animations))if(animation.enabled!==false){
+  for(const path of [animation.sheet,...(animation.frames||[])].filter(Boolean))check('PNG habilitado carregado '+path,!!assets.get(path));
+ }
+}
+check('todos inimigos sem falhas de carregamento',assets.status().failed===0&&assets.errors.length===0);
+const enemyCanvas=document.createElement('canvas');enemyCanvas.width=160;enemyCanvas.height=160;const enemyCtx=enemyCanvas.getContext('2d');
+for(const enemy of spawnEnemies()){
+ enemyCtx.clearRect(0,0,160,160);const actor={...enemy,x:60,y:40};renderEnemy(enemyCtx,actor,{x:0,y:0},renderer,1/60);
+ const bodyPixels=enemyCtx.getImageData(55,40,50,60).data;
+ check('inimigo visivel '+enemy.id,bodyPixels.some((v,i)=>i%4===3&&v>0));
+}
 const floor={map:{platforms:[{x:0,y:790,w:2000,h:100}]}};
 const make=()=>({...spawnEnemies()[0],x:800,homeX:800,y:734,grounded:true,attackCooldown:0});
 const immune=make(),protectedPlayer={x:immune.x+immune.w,y:736,w:30,h:54,health:100,invuln:.5};

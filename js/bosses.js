@@ -1,15 +1,15 @@
 import{hurt,intersects}from'./combat.js';
-import{ROOM_W,GROUND}from'./map.js';
+import{ROOM_W,GROUND,MATRONA_ARENA}from'./map.js';
 import{updateMatrona,clearMatrona,matronaAnimation,matronaFrame,renderMatronaEffects}from'./matrona.js';
 export const BOSS_DATA=[
  {id:'boss-0',assetId:'matrona',room:0,name:'MATRONA Â· VIGILÃ‚NCIA DO SETOR 9',title:'Matrona',ability:'dash',hp:180,color:'#e26b68',intro:'Unidade Matrona: o Setor 9 estÃ¡ isolado. Nenhum registro da Aurora Dynamics deixarÃ¡ esta regiÃ£o.'},
  {id:'boss-2',assetId:'warden',room:1,name:'WARDEN Â· SEGURANÃ‡A INDUSTRIAL',title:'Warden',ability:'emp',hp:240,color:'#9984ff',intro:'Warden: os dispositivos continuarÃ£o saindo. Sua investigaÃ§Ã£o termina antes da Torre Aurora.'},
  {id:'boss-3',assetId:'vespera',room:2,name:'VÃ‰SPERA Â· DIRETORA DO PROJETO',title:'VÃ©spera',ability:null,hp:320,color:'#ff4f93',intro:'VÃ©spera: a cidade chama caos de liberdade. Minha rede acabarÃ¡ com seus conflitos. A epidemia foi apenas o primeiro teste.'}
 ];
-export function createBosses(){return BOSS_DATA.map(d=>({...d,x:d.room*ROOM_W+2070,y:GROUND-132,w:74,h:132,health:d.hp,maxHealth:d.hp,arena:{left:d.room*ROOM_W+1690,right:d.room*ROOM_W+2360},active:false,dead:false,phase:1,timer:.8,warning:0,attackType:'recovery',hitCooldown:0,projectiles:[]}))}
+export function createBosses(){return BOSS_DATA.map(d=>({...d,x:d.room*ROOM_W+2070,y:GROUND-132,w:74,h:132,health:d.hp,maxHealth:d.hp,arena:d.room===0?{...MATRONA_ARENA}:{left:d.room*ROOM_W+1690,right:d.room*ROOM_W+2360},active:false,dead:false,phase:1,timer:.8,warning:0,attackType:'recovery',hitCooldown:0,projectiles:[]}))}
 export function updateBoss(b,p,dt,context={}){
  if(b.dead)return null;
- const inside=p.x+p.w>b.arena.left&&p.x<b.arena.right;
+ const inside=p.x+p.w>b.arena.left&&p.x<b.arena.right&&(b.assetId!=='matrona'||p.y+p.h>=GROUND-140);
  if(!b.active&&inside){b.active=true;b.timer=1;b.attackType='recovery';return{kind:'intro',boss:b}}
  if(!b.active)return null;
  if(b.assetId==='matrona'){updateMatrona(b,p,dt,context);return null}

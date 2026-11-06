@@ -71,9 +71,10 @@ function aim(b,p,cfg,platforms) {
 function markZones(b,p,platforms) {
  const zones=[],width=86,centers=[p.x+p.w/2,b.arena.left+105,b.arena.right-105];
  for(const center of centers) {
-  const x=Math.max(b.arena.left+12,Math.min(b.arena.right-width-12,center-width/2));
-  const surfaces=platforms.filter(s=>s.x<=x&&s.x+s.w>=x+width&&s.y>=p.y+p.h-8).sort((a,z)=>a.y-z.y);
+  const anchor=Math.max(b.arena.left+12,Math.min(b.arena.right-12,center));
+  const surfaces=platforms.filter(s=>!s.disabled&&s.x<=anchor&&s.x+s.w>=anchor&&s.w>=width&&s.y>=p.y+p.h-8).sort((a,z)=>a.y-z.y);
   const floor=surfaces[0];if(!floor)continue;
+  const x=Math.max(b.arena.left+12,floor.x,Math.min(b.arena.right-width-12,floor.x+floor.w-width,anchor-width/2));
   if(zones.some(z=>Math.abs(z.x-x)<width+55))continue;
   zones.push({x,y:floor.y-38,w:width,h:38,hit:false});
   if(zones.length===(b.phase===2?3:2))break;

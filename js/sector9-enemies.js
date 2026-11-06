@@ -1,3 +1,4 @@
+import {updateServant} from './servant-shooter.js';
 import {hurt,intersects} from './combat.js';
 import {moveBody} from './physics.js';
 
@@ -7,10 +8,12 @@ export function enemyMeleeBox(e) {
  return {x:facing>0?e.x+e.w-4:e.x-reach,y:e.y+16,w:reach+4,h:Math.min(28,e.h-20)};
 }
 export function enemyAttackBox(e) {
+ if(e.type==='servant_shooter')return null;
  if(e.room===0&&e.type==='patrol')return !e.dead&&!(e.hurtTimer>0)&&!(e.stunTimer>0)&&e.dashPhase==='dash'?{x:e.dashFacing>0?e.x+e.w-4:e.x-12,y:e.y+8,w:16,h:e.h-12}:null;
  return !e.dead&&!(e.hurtTimer>0)&&!(e.stunTimer>0)&&e.attackTimer>0?enemyMeleeBox(e):null;
 }
 export function updateSector9Enemy(e,p,dt,world) {
+ if(e.type==='servant_shooter'){updateServant(e,p,dt,world);return}
  if(e.type==='patrol'){updateImplanted(e,p,dt,world);return}
  e.vx??=0;e.vy??=0;e.attackTimer=Math.max(0,(e.attackTimer||0)-dt);
  e.windupTimer=Math.max(0,(e.windupTimer||0)-dt);
@@ -44,7 +47,7 @@ function updateImplanted(e,p,dt,world){
  e.vx??=0;e.vy??=0;e.attackCooldown=Math.max(0,e.attackCooldown-dt);
  e.animTime=(e.animTime||0)+dt;
  const dx=p.x+p.w/2-e.x-e.w/2;
- const supported=dir=>platforms.some(q=>e.x+e.w/2+dir*(e.w/2+8)>=q.x&&e.x+e.w/2+dir*(e.w/2+8)<=q.x+q.w&&Math.abs(q.y-e.y-e.h)<8);
+ const supported=dir=>platforms.some(q=>!q.disabled&&e.x+e.w/2+dir*(e.w/2+8)>=q.x&&e.x+e.w/2+dir*(e.w/2+8)<=q.x+q.w&&Math.abs(q.y-e.y-e.h)<8);
  if(e.hurtTimer>0||e.stunTimer>0){e.dashPhase=null;e.dashTimer=0;e.vx*=Math.pow(.015,dt);e.state='hurt';e.attackCooldown=Math.max(e.attackCooldown,.7)}
  else if(e.dashPhase){
   // Track Kael during preparation; lock only when the dash begins.

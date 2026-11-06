@@ -7,7 +7,14 @@ export function drawEnemyFallback(c,e,x,y) {
  const rect=(color,x,y,w,h)=>{c.fillStyle=color;c.fillRect(Math.round(x),Math.round(y),w,h)};
  const poly=(color,points)=>{c.fillStyle=color;c.beginPath();points.forEach(([x,y],i)=>i?c.lineTo(x,y):c.moveTo(x,y));c.closePath();c.fill()};
  const moving=['patrol','chase'].includes(e.state),stride=moving?Math.round(Math.sin((e.animTime||0)*9)*3):0;
- if(e.type==='drone') {
+ if(e.type==='servant_shooter') {
+  // Single-wheel fallback if the original PNG cannot load.
+  poly('#17212c',[[11,10],[24,10],[29,36],[25,47],[11,47],[7,35]]);
+  rect('#58616b',12,3,13,10);rect('#ff365c',21,7,5,2);
+  rect('#303c49',25,23,7,6);rect('#8a929a',29,24,8,3);
+  c.fillStyle='#10151e';c.beginPath();c.arc(19,52,8,0,Math.PI*2);c.fill();
+  c.strokeStyle='#77717b';c.lineWidth=2;c.beginPath();c.arc(19,52,5,0,Math.PI*2);c.stroke();
+ }else if(e.type==='drone') {
   poly('#172b38',[[3,15],[11,5],[28,5],[35,15],[28,43],[10,43]]);
   rect('#566d7d',0,17,9,19);rect('#566d7d',29,17,9,19);
   rect('#b0c9cf',2,12,6,3);rect('#b0c9cf',30,12,6,3);

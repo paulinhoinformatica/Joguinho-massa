@@ -1,0 +1,15 @@
+{
+  "name": "Servo Atirador",
+  "origin": {"x": 64, "y": 121},
+  "scale": 0.5,
+  "nativeFacing": 1,
+  "collision": {"width": 24, "height": 57},
+  "procedural": {
+    "eye": {"x": 58, "y": 17},
+    "wheel": {"x": 62, "y": 108, "radius": 6},
+    "muzzle": {"x": 100, "y": 44}
+  },
+  "animations": {
+    "idle": {"sheet": "assets/enemies/servant_shooter/idle.png", "columns": 1, "rows": 1, "count": 1, "frameWidth": 128, "frameHeight": 128, "fps": 1, "loop": true}
+  }
+}

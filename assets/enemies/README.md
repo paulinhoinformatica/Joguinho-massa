@@ -1,45 +1,52 @@
 # Inimigos
 
-Configurações separadas por inimigo e animações PNG; consulta `assets/README.md`.
+Todos os recursos de inimigos comuns ficam em `assets/enemies/<inimigo>/`.
+Configurações são registradas em `js/config/assets.js` e carregadas pelo
+AssetManager. AnimationManager e SpriteRenderer são compartilhados pelo jogo.
 
-O Setor 9 possui patrulheiro (`patrol`, 42 HP / 12 de dano) e robô de manutenção
-(`maintenance`, 48 HP / 13 de dano). Estatísticas e colisores foram preservados:
-patrulheiro 34 × 58; manutenção 38 × 60 após aplicar seu config.
+## Recursos atuais
 
-Os dois usam `moveBody` para chão, plataformas e knockback. A própria caixa do
-corpo é também a hurtbox: não há escala adicional nem um colisor invisível
-separado. O cajado continua usando sua hitbox existente e o consumo por golpe.
-O knockback de 190 unidades/s já calculado ao receber dano agora é aplicado.
-Não foi adicionada invulnerabilidade extra aos inimigos.
+- `infected/`: Implantado Infectado, ID `implanted_infected`. Contém
+  `config.json`, `idle.png` (128 × 128) e `walk.png` (512 × 128).
+  Substitui apenas o humanoide `patrol` do Setor 9.
+- `cyborg_soldier/config.json`: humanoides dos demais setores.
+- `infected_drone/config.json`: drones.
+- `infected_robot/config.json`: robôs, incluindo manutenção.
+- `servant_shooter/`: Servo Atirador, com o PNG original e animações em código.
+  Substitui o robô de manutenção do Setor 9 com o ID do spawn original e posição atual x=1120, mantendo
+  48 HP, 13 de dano e o ID de recompensa. A manutenção dos outros mapas permanece.
+- `wheel_shooter/`: pasta reservada com instruções; ainda sem recursos ou
+  registro no manifesto.
 
-`js/sector9-enemies.js` define golpes direcionais com alcance frontal de 52
-unidades, altura de até 28, preparação de 0,22 s e fase ativa de 0,14 s.
-O intervalo de 1,25 s e o dano original foram mantidos. A direção é travada na
-preparação; dano exige sobreposição horizontal e vertical e acontece no máximo
-uma vez por execução, respeitando a invulnerabilidade de Kael e seu dash.
-Receber dano ou stun cancela o golpe pendente. Alvos no ar só são atingidos
-quando realmente cruzam a área do golpe.
+Cyborg, drone e robô ainda usam as silhuetas de `js/enemy-art.js`.
+Seus PNGs previstos não estão instalados e as animações permanecem com
+`enabled: false`, evitando pedidos de arquivos inexistentes. Ao instalar
+sprites, ajuste grade, FPS, origem, escala e orientação nativa antes de
+habilitar cada animação.
 
-`js/enemy-art.js` desenha as silhuetas Canvas: capacete, placas, articulações,
-ferramentas e sinais de infecção, diferenciando humanoides, robôs e drones.
-O golpe ativo usa a mesma geometria da área ofensiva para seu rastro visual.
+## Implantado Infectado
 
-## Sprites PNG futuros
+Preserva 42 HP e 12 de dano. Walk tem quatro quadros de 128 × 128, 6 FPS e loop.
+Idle e walk usam escala 0,5, origem (64, 120) e `nativeFacing: -1`.
+O sprite original olha para a esquerda; o renderizador espelha para a direita.
+O colisor físico mede 28 × 56; a hurtbox mede 32 × 54.
 
-Nenhum PNG de inimigo está instalado. As animações previstas permanecem em
-seus configs, com `enabled: false`; o manifest agora permite seu carregamento.
-Para instalar uma animação real, coloque o PNG no caminho definido, ajuste
-grade, FPS, origem, escala e `nativeFacing`, e habilite somente aquela animação.
-O AssetManager a carregará na região correspondente. Enquanto isso, o fallback
-Canvas continua funcionando sem solicitar arquivos inexistentes. A IA dos
-inimigos de outros mapas não foi alterada.
+Patrulha e perseguição usam a física existente, respeitando paredes e bordas.
+A investida prepara por 0,4 s, trava a direção no final da preparação,
+avança por 0,2 s e recupera por 0,7 s, com cooldown de 2 s.
+Apenas o avanço possui hitbox ofensiva, com um acerto por execução.
+Dano ou stun cancelam a investida. Cajado e invulnerabilidade de Kael
+continuam usando suas regras existentes.
 
-## Depuração
+O Servo Atirador usa colisor/hurtbox de 24 × 57 e tiros direcionais. O robô
+de manutenção dos outros mapas preserva suas regras. Consulte
+`servant_shooter/README.md` para animações procedurais e parâmetros de tiro.
 
-F3 alterna o overlay durante o jogo, inclusive pausado: azul para o colisor
-físico, verde tracejado para a hurtbox e vermelho para áreas ofensivas ativas e
-setas de direção. Azul e verde coincidem quando a própria caixa física recebe
-o dano. A transformação da câmera é aplicada uma vez, após os efeitos de chuva.
+## Depuração e testes
 
-Verificação: `node tests/sector9.mjs` (30/60/120 FPS) e
-`node tests/browser-sector9.mjs` (HTTP local em 8765 e Edge/CDP em 9222).
+F3 mostra colisor físico em azul, hurtbox em verde tracejado e hitbox
+ofensiva ativa em vermelho, além da direção.
+
+`tests/infected.html` verifica carregamento dos inimigos, renderização,
+animações, orientação e combate do Implantado no navegador.
+`tests/infected-results.txt` contém o resultado da última execução.

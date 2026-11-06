@@ -11,12 +11,12 @@ const world={map:buildMap()},config=JSON.parse(readFileSync(new URL('../assets/b
 const originalRandom=Math.random;let seed=1729;
 Math.random=()=>{seed=(1664525*seed+1013904223)>>>0;return seed/4294967296};
 for(const a of Object.values(config.animations))if(a.enabled!==false)a.ready=true;
-assert.deepEqual(spawnEnemies().filter(e=>e.room===0).map(e=>e.type),['patrol','maintenance']);
+assert.deepEqual(spawnEnemies().filter(e=>e.room===0).map(e=>e.type),['patrol','servant_shooter']);
 assert.equal(Object.values(MATRONA_TIMING).reduce((a,b)=>a+b,0),2);
 for(const fps of [30,60,120]){
  const dt=1/fps;
  for(const type of ['maintenance'])for(const facing of [-1,1]){
-  const e=spawnEnemies().find(e=>e.room===0&&e.type===type);e.x=1000;e.y=GROUND-e.h;e.facing=facing;e.attackCooldown=0;
+  const e=spawnEnemies().find(e=>e.type===type);e.room=0;e.x=1000;e.y=GROUND-e.h;e.facing=facing;e.attackCooldown=0;
   const p=createPlayer();p.x=facing>0?e.x+e.w+12:e.x-p.w-12;p.y=GROUND-p.h;
   const hp=p.health;
   updateEnemies([e],p,dt,world);assert.ok(e.meleePending);assert.equal(enemyAttackBox(e),null);assert.equal(p.health,hp);

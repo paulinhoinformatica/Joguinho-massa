@@ -1,0 +1,68 @@
+PASS alcance 380
+PASS ponto do Setor9 acessivel do chao 0
+PASS ponto do Setor9 acessivel do chao 1
+PASS ativa chao Yara/30
+PASS alcanca plataforma superior chao Yara/30
+PASS altura suficiente chao Yara/30
+PASS cabo temporario termina chao Yara/30
+PASS ativa chao segundo ponto/30
+PASS alcanca plataforma superior chao segundo ponto/30
+PASS altura suficiente chao segundo ponto/30
+PASS cabo temporario termina chao segundo ponto/30
+PASS ativa plataforma/30
+PASS alcanca plataforma superior plataforma/30
+PASS altura suficiente plataforma/30
+PASS cabo temporario termina plataforma/30
+PASS ativa salto/30
+PASS alcanca plataforma superior salto/30
+PASS altura suficiente salto/30
+PASS cabo temporario termina salto/30
+PASS ativa chao Yara/60
+PASS alcanca plataforma superior chao Yara/60
+PASS altura suficiente chao Yara/60
+PASS cabo temporario termina chao Yara/60
+PASS ativa chao segundo ponto/60
+PASS alcanca plataforma superior chao segundo ponto/60
+PASS altura suficiente chao segundo ponto/60
+PASS cabo temporario termina chao segundo ponto/60
+PASS ativa plataforma/60
+PASS alcanca plataforma superior plataforma/60
+PASS altura suficiente plataforma/60
+PASS cabo temporario termina plataforma/60
+PASS ativa salto/60
+PASS alcanca plataforma superior salto/60
+PASS altura suficiente salto/60
+PASS cabo temporario termina salto/60
+PASS ativa chao Yara/120
+PASS alcanca plataforma superior chao Yara/120
+PASS altura suficiente chao Yara/120
+PASS cabo temporario termina chao Yara/120
+PASS ativa chao segundo ponto/120
+PASS alcanca plataforma superior chao segundo ponto/120
+PASS altura suficiente chao segundo ponto/120
+PASS cabo temporario termina chao segundo ponto/120
+PASS ativa plataforma/120
+PASS alcanca plataforma superior plataforma/120
+PASS altura suficiente plataforma/120
+PASS cabo temporario termina plataforma/120
+PASS ativa salto/120
+PASS alcanca plataforma superior salto/120
+PASS altura suficiente salto/120
+PASS cabo temporario termina salto/120
+PASS fora de alcance mensagem correta
+PASS nao desbloqueado mensagem distinta
+PASS limite inclusivo de alcance
+PASS EMP preservado sem ancora
+PASS Sobrecarga preservada sem ancora
+PASS energia insuficiente distinguida
+PASS brilho de ponto proximo
+PASS fora de alcance sem brilho
+PASS cabo do braco a ancora
+PASS plataforma fina so permite subida do gancho false
+PASS teto solido continua bloqueando false
+PASS plataforma fina so permite subida do gancho true
+PASS teto solido continua bloqueando true
+PASS dano cancela assistencia e cabo
+PASS regressao dash 4592 verificacoes
+PASS regressao combate 159 verificacoes
+ALL PASS

@@ -1,0 +1,60 @@
+<!doctype html><meta charset="utf-8"><pre id="results">RUNNING</pre><script type="module">
+import {Engine} from '../js/engine.js';
+import {createPlayer,updatePlayer} from '../js/player.js';
+import {buildMap,GROUND} from '../js/map.js';
+import {freshAbilities} from '../js/abilities.js';
+import {HOOK_RANGE,hookOrigin,hookInRange,nearestHook} from '../js/hook.js';
+import {World} from '../js/world.js';
+import {moveBody} from '../js/physics.js';
+import {runDashTests} from './dash-cases.js';
+import {runCombatTests} from './combat-cases.js';
+const results=[],check=(s,b)=>{if(!b)throw Error(s);results.push('PASS '+s)};
+try{
+const map=buildMap(),abilities={...freshAbilities(),hook:true},make=(x,y=736)=>({...createPlayer(),x,y,grounded:y===736});
+const use=(p,a=abilities,points=map.hookPoints)=>{
+ const messages=[],ctx={state:{player:p,abilities:a,bosses:[]},enemies:[],hookPoints:points,ui:{toast(m){messages.push(m)}},effects:{add(){}}};
+ Engine.prototype.useImplant.call(ctx);return messages.at(-1);
+};
+check('alcance 380',HOOK_RANGE===380);
+for(const [x,index] of [[610,0],[1235,1]]){
+ const p=make(x),a=hookOrigin(p),h=map.hookPoints[index],d=Math.hypot(a.x-h.x,a.y-h.y);
+ check('ponto do Setor9 acessivel do chao '+index,d>300&&d<=380&&nearestHook(p,map.hookPoints)===h);
+}
+for(const fps of [30,60,120])for(const [x,y,mode] of [[610,736,'chao Yara'],[1235,736,'chao segundo ponto'],[600,526,'plataforma'],[600,650,'salto']]){
+ const dt=1/fps,p=make(x,y);if(mode==='salto')p.vy=-200;
+ const target=nearestHook(p,map.hookPoints),message=use(p);
+ check('ativa '+mode+'/'+fps,message.includes('ancoragem')&&!p.grounded&&p.vy<-470&&p.hookCable&&p.energy===88&&!abilities.dash&&!abilities.doubleJump);
+ const initialBottom=p.y+p.h;let high=initialBottom,landed=false;
+ for(let i=0;i<fps*2;i++){
+  updatePlayer(p,{platforms:map.platforms},dt,abilities);high=Math.min(high,p.y+p.h);
+  if(p.grounded&&p.y+p.h<GROUND){landed=true;break}
+ }
+ check('alcanca plataforma superior '+mode+'/'+fps,landed);
+ check('altura suficiente '+mode+'/'+fps,high<=initialBottom-50);
+ for(let i=0;i<fps;i++)updatePlayer(p,{platforms:map.platforms},dt,abilities);
+ check('cabo temporario termina '+mode+'/'+fps,!p.hookCable&&p.hookCableTimer===0);
+}
+const out=make(0);check('fora de alcance mensagem correta',use(out)==='Nenhum ponto magnético ao alcance.'&&out.vy===0&&!out.hookCable);
+check('nao desbloqueado mensagem distinta',use(make(610),freshAbilities())==='Implante especial não desbloqueado.');
+const boundary=make(0),origin=hookOrigin(boundary);check('limite inclusivo de alcance',hookInRange(boundary,{x:origin.x+380,y:origin.y})&&!hookInRange(boundary,{x:origin.x+381,y:origin.y}));
+const emp=make(0);check('EMP preservado sem ancora',use(emp,{...abilities,emp:true}).includes('Pulso')&&emp.energy===65&&emp.pulseTimer===.3);
+const overload=make(0);check('Sobrecarga preservada sem ancora',use(overload,{...abilities,overload:true}).includes('Sobrecarga')&&overload.energy===72&&overload.overloadTimer===.8);
+const empty=make(0);empty.energy=0;check('energia insuficiente distinguida',use(empty,{...freshAbilities(),emp:true}).includes('Energia insuficiente'));
+const p=make(610);use(p);const recorded=[],c=new Proxy({moveTo(x,y){recorded.push(['from',x,y])},lineTo(x,y){recorded.push(['to',x,y])},arc(x,y){recorded.push(['glow',x,y])}},{get(o,k){return k in o?o[k]:()=>{}}});
+const world=new World();world.drawHookPoints(c,{player:make(610),abilities});check('brilho de ponto proximo',recorded.some(r=>r[0]==='glow'&&r[1]===550));
+recorded.length=0;world.drawHookPoints(c,{player:out,abilities});check('fora de alcance sem brilho',!recorded.some(r=>r[0]==='glow'));
+recorded.length=0;world.drawHookCable(c,p);const arm=hookOrigin(p);check('cabo do braco a ancora',recorded.some(r=>r[0]==='from'&&r[1]===arm.x&&r[2]===arm.y)&&recorded.some(r=>r[0]==='to'&&r[1]===p.hookCable.x&&r[2]===p.hookCable.y));
+for(const active of [false,true]){
+ const body={x:600,y:610,w:30,h:54,vx:0,vy:-1000,hookLiftTimer:active?1:0};
+ moveBody(body,.03,[{x:520,y:580,w:230,h:24}]);
+ check('plataforma fina so permite subida do gancho '+active,active?body.vy<0:body.vy===0&&body.y===604);
+ const solid={x:600,y:610,w:30,h:54,vx:0,vy:-1000,hookLiftTimer:active?1:0};
+ moveBody(solid,.03,[{x:520,y:500,w:230,h:104}]);check('teto solido continua bloqueando '+active,solid.vy===0&&solid.y===604);
+}
+const damaged=make(610);use(damaged);damaged.damageTimer=.2;updatePlayer(damaged,{platforms:map.platforms},1/60,abilities);check('dano cancela assistencia e cabo',!damaged.hookLiftTimer&&!damaged.hookCable);
+const dashChecks=runDashTests();check('regressao dash '+dashChecks+' verificacoes',dashChecks>0);
+const cfg=await(await fetch(new URL('../assets/characters/protagonist/config.json',location.href))).json();
+const combatChecks=runCombatTests(cfg);check('regressao combate '+combatChecks.length+' verificacoes',combatChecks.length>0);
+document.querySelector('#results').textContent=results.join('\n')+'\nALL PASS';
+}catch(e){document.querySelector('#results').textContent=results.join('\n')+'\nFAIL '+e.stack}
+</script>

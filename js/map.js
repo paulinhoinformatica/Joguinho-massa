@@ -1,14 +1,19 @@
 export const ROOM_W=2400,WORLD_H=900,GROUND=790;
+export const SECTOR9_LAYOUT=2;
+export const MATRONA_ARENA=Object.freeze({left:1510,right:2360,floor:GROUND,spawnX:2070});
+export const SECTOR9_AREAS=[{id:0,name:'Ruas dos Sobreviventes',left:0,right:700},{id:1,name:'Telhados e Passarelas',left:700,right:1400},{id:2,name:'Bloqueio de Quarentena',left:1400,right:2400}];
 export const REGIONS=[
  {id:'slum',name:'Setor 9',subtitle:'ATO I · O CERCO',color:'#182b35',x:0},
  {id:'factory',name:'Complexo Industrial',subtitle:'ATO II · A DISTRIBUIÇÃO',color:'#302a2b',x:ROOM_W},
  {id:'corporate',name:'Torre Aurora',subtitle:'ATO III · A REDE DE CONTROLE',color:'#1c2037',x:ROOM_W*2}
 ];
-export const WORLD_W=ROOM_W*REGIONS.length;
-export function regionAt(x){return REGIONS[Math.max(0,Math.min(REGIONS.length-1,Math.floor(x/ROOM_W)))]}
+for(const r of REGIONS)r.width=ROOM_W;
+export const WORLD_W=REGIONS.at(-1).x+REGIONS.at(-1).width;
+export function regionAt(x){return REGIONS.find(r=>x>=r.x&&x<r.x+r.width)||(x<0?REGIONS[0]:REGIONS.at(-1))}
 export function assetRegionAt(x){const r=regionAt(x);return r.id==='slum'?'slums':r.id==='factory'?'industrial':x>=r.x+1500?'virus_core':'corporate'}
 const ROOM_NAMES=[['Ruas do Setor 9','Telhados e oficina','Bloqueio de Matrona'],['Recepção de carga','Linha de distribuição','Segurança Warden'],['Átrio corporativo','Laboratórios secretos','Núcleo de Véspera']];
-export const MAP_ROOMS=REGIONS.flatMap((r,i)=>ROOM_NAMES[i].map((name,j)=>({id:i*3+j,name,region:i,x:r.x+j*800})));
+export const MAP_ROOMS=REGIONS.flatMap((r,i)=>ROOM_NAMES[i].map((name,j)=>({id:i*3+j,name:i===0?SECTOR9_AREAS[j].name:name,region:i,x:i===0?SECTOR9_AREAS[j].left:r.x+j*800})));
+export function roomAt(x){return [...MAP_ROOMS].reverse().find(r=>x>=r.x)?.id??0}
 const platform=(x,y,w,h,kind='metal')=>({x,y,w,h,kind});
 export function buildMap(events=[]){
  const platforms=[],hazards=[],checkpoints=[],terminals=[],secrets=[],npcs=[],hookPoints=[];
@@ -17,11 +22,23 @@ export function buildMap(events=[]){
   platforms.push(platform(x,GROUND,ROOM_W,110,'ground'));
   // Original roof/catwalk layouts, with a clear floor inside arenas.
   const layouts=r.id==='slum'?[[180,690,260,'scrap'],[520,580,230,'walkway'],[820,670,220,'roof'],[1120,570,270,'walkway'],[1470,630,200,'roof']]:r.id==='factory'?[[150,690,330,'catwalk'],[560,590,250,'catwalk'],[900,650,260,'catwalk'],[1240,550,270,'catwalk'],[1520,650,150,'catwalk']]:[[160,690,280,'glass'],[500,590,270,'glass'],[850,650,300,'glass'],[1220,550,250,'glass'],[1500,650,170,'fleshmetal']];
-  for(const [px,y,w,kind] of layouts)platforms.push(platform(x+px,y,w,24,kind));
+  if(r.id!=='slum')for(const [px,y,w,kind] of layouts)platforms.push(platform(x+px,y,w,24,kind));
+  else {
+   // Several useful tiers inside the original regional footprint. Safe floor
+   // remains below every exploration route and the collapsing catwalk.
+   const roofs=[[180,690,260,'scrap'],[430,615,100,'walkway'],[520,580,230,'walkway'],[820,670,220,'roof'],[1050,670,210,'roof'],[1120,570,270,'walkway'],[690,485,170,'walkway'],[880,395,180,'roof'],[1130,395,190,'walkway'],[1030,290,160,'roof'],[1220,215,150,'walkway']];
+   for(const [px,y,w,kind] of roofs)platforms.push({...platform(px,y,w,20,kind),oneWay:true});
+   platforms.push({...platform(1320,470,90,18,'unstable'),oneWay:true,id:'s9-unstable',warning:0,disabled:false,restoreTimer:0});
+   platforms.push({...platform(1535,710,135,18,'arena'),oneWay:true,id:'arena-left'}, {...platform(2200,710,135,18,'arena'),oneWay:true,id:'arena-right'});
+   // Low cover breaks the ground-level shooter's line of fire without blocking
+   // the high route; both blocks can be cleared with the normal jump.
+   platforms.push(platform(950,718,42,72,'cover'),platform(1275,718,42,72,'cover'));
+  }
   checkpoints.push({x:x+(r.id==='slum'?310:r.id==='factory'?170:190),name:r.id==='slum'?'Abrigo da Chuva':r.id==='factory'?'Gerador auxiliar':'Elevador de serviço'});
-  checkpoints.push({x:x+1580,name:r.id==='slum'?'Oficina do bloqueio':r.id==='factory'?'Manutenção de segurança':'Abrigo do núcleo'});
+  checkpoints.push({x:x+(r.id==='slum'?1440:1580),name:r.id==='slum'?'Oficina do bloqueio':r.id==='factory'?'Manutenção de segurança':'Abrigo do núcleo'});
   hookPoints.push({x:x+550,y:420},{x:x+1250,y:390});
  }
+ hookPoints.push({x:930,y:275},{x:1280,y:110});
  hazards.push({x:2900,y:GROUND-18,w:180,h:18,kind:'acid'},{x:3500,y:GROUND-18,w:150,h:18,kind:'press'},{x:5560,y:GROUND-18,w:150,h:18,kind:'laser'},{x:6290,y:GROUND-18,w:160,h:18,kind:'virus'});
  terminals.push(
   {x:1300,y:570,id:'log-1',name:'Terminal do isolamento'},
@@ -31,10 +48,12 @@ export function buildMap(events=[]){
   {x:4710,y:GROUND,id:'gate-tower',name:'Elevador da Torre'},
   {x:5850,y:650,id:'log-3',name:'Arquivo da Aurora Dynamics'},
   {x:6230,y:550,id:'implant-overload',name:'Matriz de sobrecarga',text:'Sobrecarga integrada: fortalece o próximo golpe.'},
-  {x:3350,y:650,id:'shortcut-maintenance',name:'Ponte de manutenção',text:'Ponte de manutenção estendida. A passagem superior evita a prensa.',shortcut:platform(3550,620,170,24,'catwalk')}
+  {x:3350,y:650,id:'shortcut-maintenance',name:'Ponte de manutenção',text:'Ponte de manutenção estendida. A passagem superior evita a prensa.',shortcut:platform(3550,620,170,24,'catwalk')},
+  {x:1000,y:395,id:'shortcut-sector9',name:'Controle da passarela 09',text:'Passarela estendida. O atalho superior conecta os telhados à oficina.',shortcut:{...platform(1060,395,70,18,'bridge'),oneWay:true,id:'s9-bridge'}}
  );
  for(const t of terminals)if(t.shortcut&&events.includes(t.id))platforms.push({...t.shortcut});
  secrets.push({x:920,y:620,item:'Célula de energia'},{x:3100,y:550,item:'Dados de distribuição'},{x:5400,y:550,item:'Registros de experiências'},{x:6300,y:760,item:'Filtro anticontaminação'});
+ secrets.push({x:1310,y:215,item:'Peças da vigilância 09'});
  npcs.push(
   {id:'yara',x:610,y:GROUND,name:'Yara · Hacker',assetId:'yara',defaultFacing:-1,facePlayerOnDialog:true,ability:'hook',text:'Robôs e cidadãos com implantes estão perdendo o controle. Os terminais dos telhados registraram as primeiras infecções. Matrona isolou o Setor 9 para impedir que as provas saiam daqui. Use este gancho nos pontos amarelos.'},
   {id:'oren-slum',x:1000,y:GROUND,name:'Oren · Mecânico',assetId:'oren',defaultFacing:-1,facePlayerOnDialog:true,shop:true,text:'Posso reforçar sua proteção por 20 créditos. Procure dados e peças nos telhados; cada segredo financia a próxima melhoria.'},
