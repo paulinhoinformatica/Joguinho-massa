@@ -1,12 +1,12 @@
 import{hurt,intersects}from'./combat.js';
-import{ROOM_W,GROUND,MATRONA_ARENA}from'./map.js';
+import{REGIONS,ROOM_W,GROUND,MATRONA_ARENA}from'./map.js';
 import{updateMatrona,clearMatrona,matronaAnimation,matronaFrame,renderMatronaEffects}from'./matrona.js';
 export const BOSS_DATA=[
  {id:'boss-0',assetId:'matrona',room:0,name:'MATRONA Â· VIGILÃ‚NCIA DO SETOR 9',title:'Matrona',ability:'dash',hp:180,color:'#e26b68',intro:'Unidade Matrona: o Setor 9 estÃ¡ isolado. Nenhum registro da Aurora Dynamics deixarÃ¡ esta regiÃ£o.'},
  {id:'boss-2',assetId:'warden',room:1,name:'WARDEN Â· SEGURANÃ‡A INDUSTRIAL',title:'Warden',ability:'emp',hp:240,color:'#9984ff',intro:'Warden: os dispositivos continuarÃ£o saindo. Sua investigaÃ§Ã£o termina antes da Torre Aurora.'},
  {id:'boss-3',assetId:'vespera',room:2,name:'VÃ‰SPERA Â· DIRETORA DO PROJETO',title:'VÃ©spera',ability:null,hp:320,color:'#ff4f93',intro:'VÃ©spera: a cidade chama caos de liberdade. Minha rede acabarÃ¡ com seus conflitos. A epidemia foi apenas o primeiro teste.'}
 ];
-export function createBosses(){return BOSS_DATA.map(d=>({...d,x:d.room*ROOM_W+2070,y:GROUND-132,w:74,h:132,health:d.hp,maxHealth:d.hp,arena:d.room===0?{...MATRONA_ARENA}:{left:d.room*ROOM_W+1690,right:d.room*ROOM_W+2360},active:false,dead:false,phase:1,timer:.8,warning:0,attackType:'recovery',hitCooldown:0,projectiles:[]}))}
+export function createBosses(){return BOSS_DATA.map(d=>({...d,x:REGIONS[d.room].x+(d.room===1?2470:2070),y:GROUND-132,w:74,h:132,health:d.hp,maxHealth:d.hp,arena:d.room===0?{...MATRONA_ARENA}:{left:REGIONS[d.room].x+(d.room===1?2090:1690),right:REGIONS[d.room].x+(d.room===1?2760:2360)},active:false,dead:false,phase:1,timer:.8,warning:0,attackType:'recovery',hitCooldown:0,projectiles:[]}))}
 export function updateBoss(b,p,dt,context={}){
  if(b.dead)return null;
  const inside=p.x+p.w>b.arena.left&&p.x<b.arena.right&&(b.assetId!=='matrona'||p.y+p.h>=GROUND-140);
@@ -21,7 +21,7 @@ export function updateBoss(b,p,dt,context={}){
   if(b.warning<=0){
    if(b.pattern==='sweep'){
     const box={x:b.facing>0?b.x+b.w:b.x-150,y:GROUND-65,w:150,h:65};
-    if(intersects(p,box))hurt(p,12+b.room*3,b.x+b.w/2);
+    if(intersects(p,box))hurt(p,12+b.room*3,b.x+b.w/2,{source:"boss_melee",entity:b.id,x:b.x,y:b.y});
    }else{
     const count=b.room===2?3:1;
     for(let i=0;i<count;i++)b.projectiles.push({x:b.x+b.w/2,y:GROUND-45-i*30,vx:b.facing*(210+b.room*25),vy:0,life:2.5,damage:10+b.room*2,color:b.color});
@@ -33,7 +33,7 @@ export function updateBoss(b,p,dt,context={}){
   b.pattern=b.room===0?(b.turn%3===0?'burst':'sweep'):(b.turn%2?'burst':'sweep');
   b.attackType='windup';b.warning=.8-b.room*.08;b.timer=b.warning;
  }
- for(const bolt of b.projectiles){bolt.x+=bolt.vx*dt;bolt.y+=bolt.vy*dt;bolt.life-=dt;if(bolt.life>0&&intersects(p,{x:bolt.x,y:bolt.y,w:17,h:12})){hurt(p,bolt.damage,b.x);bolt.life=0}}
+ for(const bolt of b.projectiles){bolt.x+=bolt.vx*dt;bolt.y+=bolt.vy*dt;bolt.life-=dt;if(bolt.life>0&&intersects(p,{x:bolt.x,y:bolt.y,w:17,h:12})){hurt(p,bolt.damage,bolt.x,{source:"projectile",entity:b.id,x:bolt.x,y:bolt.y});bolt.life=0}}
  b.projectiles=b.projectiles.filter(x=>x.life>0);
  return null;
 }

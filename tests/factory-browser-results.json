@@ -1,0 +1,16 @@
+{
+  "report": {
+    "source": {
+      "source": "hazard_pool",
+      "entity": "coolant-pool",
+      "type": "chemical",
+      "x": 3500,
+      "y": 772,
+      "at": 0.024300000000093133
+    },
+    "debug": true,
+    "regionWidth": 2800
+  },
+  "errors": [],
+  "badResponses": []
+}

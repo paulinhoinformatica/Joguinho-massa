@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import {REGIONS,MAP_ROOMS,ROOM_W,WORLD_W,GROUND,buildMap,assetRegionAt} from '../js/map.js';
+import {REGIONS,MAP_ROOMS,ROOM_W,WORLD_W,GROUND,buildMap,assetRegionAt,regionAt} from '../js/map.js';
 import {Engine,newState} from '../js/engine.js';
 import {createBosses,updateBoss,damageBoss} from '../js/bosses.js';
 import {spawnEnemies} from '../js/enemies.js';
@@ -9,23 +9,23 @@ import {moveBody} from '../js/physics.js';
 
 const map=buildMap();
 assert.deepEqual(REGIONS.map(r=>r.id),['slum','factory','corporate']);
-assert.equal(WORLD_W,7200);assert.equal(MAP_ROOMS.length,9);
+assert.equal(WORLD_W,7600);assert.equal(MAP_ROOMS.length,9);
 assert.deepEqual(createBosses().map(b=>b.assetId),['matrona','warden','vespera']);
-assert.ok(spawnEnemies().every(e=>e.x>=0&&e.x<WORLD_W&&e.x%ROOM_W<1690));
+assert.ok(spawnEnemies().every(e=>e.x>=0&&e.x<WORLD_W&&e.x<createBosses()[e.room].arena.left));
 assert.ok(map.npcs.every(n=>n.x>=0&&n.x<WORLD_W));
 assert.ok(map.terminals.every(t=>t.x>=0&&t.x<WORLD_W));
-assert.ok(map.hazards.every(h=>h.x%ROOM_W<1690));
+assert.ok(map.hazards.every(h=>h.x<createBosses()[REGIONS.indexOf(regionAt(h.x))].arena.left));
 for(let i=0;i<3;i++)assert.ok(map.checkpoints.some(cp=>cp.x===checkpointFor(i).x));
-assert.equal(assetRegionAt(4900),'corporate');assert.equal(assetRegionAt(6500),'virus_core');
+assert.equal(assetRegionAt(5300),'corporate');assert.equal(assetRegionAt(6900),'virus_core');
 assert.ok(!JSON.stringify(map).match(/sewers|abismo|Esgotos/));
 assert.equal(buildMap(['shortcut-maintenance']).platforms.length,map.platforms.length+1);
 
 const state=newState(),fake={state,ui:{toast(){}},gateToast:-1};
 state.player.x=2500;Engine.prototype.checkGates.call(fake);assert.equal(state.player.x,ROOM_W-state.player.w);
 state.bosses[0].dead=true;syncProgress(state);assert.equal(unlockedAct(state),1);assert.ok(state.abilities.dash&&state.abilities.doubleJump);
-state.player.x=4900;Engine.prototype.checkGates.call(fake);assert.equal(state.player.x,ROOM_W*2-state.player.w);
+state.player.x=5300;Engine.prototype.checkGates.call(fake);assert.equal(state.player.x,REGIONS[2].x-state.player.w);
 state.bosses[1].dead=true;syncProgress(state);assert.equal(unlockedAct(state),2);assert.ok(state.items.includes('Credencial de Warden'));
-state.player.x=4900;Engine.prototype.checkGates.call(fake);assert.equal(state.player.x,4900);
+state.player.x=5300;Engine.prototype.checkGates.call(fake);assert.equal(state.player.x,5300);
 state.player.x=100;Engine.prototype.checkGates.call(fake);assert.equal(state.player.x,100);
 
 for(const fps of [30,60,120])for(const boss of createBosses()){
@@ -54,7 +54,7 @@ for(let oldRegion=0;oldRegion<5;oldRegion++)for(const progress of [0,1,2,3]){
  const next=normalizeSave(old);
  assert.equal(next.version,2);assert.equal(next.bosses.length,3);assert.equal(next.credits,123);assert.ok(next.abilities.hook&&next.items.includes('peça antiga'));
  assert.ok(next.player.x>=0&&next.player.x+next.player.w<=WORLD_W);
- assert.ok(Math.floor(next.player.x/ROOM_W)<=unlockedAct(next));
+ assert.ok(REGIONS.indexOf(regionAt(next.player.x))<=unlockedAct(next));
  assert.ok(map.checkpoints.some(cp=>cp.x===next.checkpoint.x));
  assert.equal(next.bosses.filter(b=>b.dead).length,progress);
  if(oldRegion===2)assert.equal(next.player.x,next.checkpoint.x);

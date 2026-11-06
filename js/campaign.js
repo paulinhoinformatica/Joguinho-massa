@@ -8,7 +8,7 @@ export const ACTS=[
 ];
 export function defeated(state,id){return state.bosses.some(b=>b.id===id&&b.dead)}
 export function unlockedAct(state){return defeated(state,'boss-0')?(defeated(state,'boss-2')?2:1):0}
-export function checkpointFor(region=0,beforeBoss=false){const i=Math.max(0,Math.min(2,region));return{x:i*ROOM_W+(beforeBoss?(i===0?1440:1580):i===0?310:i===1?170:190),y:GROUND-57,region:i,name:beforeBoss?['Oficina do bloqueio','Manutenção de segurança','Abrigo do núcleo'][i]:['Abrigo da Chuva','Gerador auxiliar','Elevador de serviço'][i]}}
+export function checkpointFor(region=0,beforeBoss=false){const i=Math.max(0,Math.min(2,region));return{x:REGIONS[i].x+(beforeBoss?(i===0?1440:(i===1?1980:1580)):i===0?310:i===1?170:190),y:GROUND-57,region:i,name:beforeBoss?['Oficina do bloqueio','Manutenção de segurança','Abrigo do núcleo'][i]:['Abrigo da Chuva','Gerador auxiliar','Elevador de serviço'][i]}}
 export function syncProgress(state){
  state.quests=ACTS.map(a=>({id:a.id,name:a.name,goal:1,progress:defeated(state,a.boss)?1:0,complete:defeated(state,a.boss)}));
  state.quests.push({id:'records',name:'Opcional · Recuperar os três registros da Aurora',goal:3,progress:['log-1','log-2','log-3'].filter(id=>state.events.includes(id)).length,complete:['log-1','log-2','log-3'].every(id=>state.events.includes(id))});
