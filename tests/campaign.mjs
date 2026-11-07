@@ -31,7 +31,7 @@ state.player.x=100;Engine.prototype.checkGates.call(fake);assert.equal(state.pla
 for(const fps of [30,60,120])for(const boss of createBosses()){
  const p={x:boss.x-45,y:GROUND-54,w:30,h:54,health:100,invuln:0,attackTimer:1,state:'attack',attackFrameReady:true,externalAttackAnimation:true,combo:1,facing:1};
  assert.equal(updateBoss(boss,p,1/fps).kind,'intro');
- let sawWindup=false,sawRecovery=false,sawProjectile=false;
+ let sawWindup=false,sawRecovery=false,sawProjectile=false,sawExclusive=false;
  for(let i=0;i<fps*10;i++){
   p.invuln=10;updateBoss(boss,p,1/fps);
   if(boss.attackType==='windup'){
@@ -39,11 +39,12 @@ for(const fps of [30,60,120])for(const boss of createBosses()){
    damageBoss(boss,p);assert.equal(boss.health,before);
   }else sawRecovery=true;
   sawProjectile ||= boss.projectiles.length>0;
+  sawExclusive ||= (boss.offense?.length||0)>0||(boss.waves?.length||0)>0;
  }
- assert.ok(sawWindup&&sawRecovery);if(boss.assetId==='matrona')assert.equal(boss.projectiles.length,0);else assert.ok(sawProjectile);
+ assert.ok(sawWindup&&sawRecovery);if(boss.assetId==='matrona')assert.equal(boss.projectiles.length,0);else if(boss.assetId==='warden')assert.ok(sawExclusive);else assert.ok(sawProjectile);
  boss.attackType='recovery';boss.hitCooldown=0;p.attackBox={...boss};
  let strikes=0;
- while(!boss.dead){p.attackHitConsumed=false;boss.hitCooldown=0;damageBoss(boss,p);strikes++;assert.ok(strikes<20);}
+ while(!boss.dead){if(boss.wardenState==='transition')for(let i=0;i<fps*2;i++)updateBoss(boss,p,1/fps);boss.attackType='recovery';p.attackHitConsumed=false;boss.hitCooldown=0;damageBoss(boss,p);strikes++;assert.ok(strikes<20);}
  assert.ok(boss.dead&&boss.deathTimer>0&&boss.projectiles.length===0);
 }
 

@@ -1,3 +1,4 @@
+import{wardenHurtbox}from'./warden.js';
 import {industrialAttackBox} from './enemies.js';
 import {enemyHurtbox} from './combat.js';
 import {enemyAttackBox} from './sector9-enemies.js';
@@ -10,7 +11,8 @@ export function drawCombatDebug(c,state,enemies,camera,map) {
  for(const h of map?.hazards||[])box(h,'#ffad42');
  const p=state.player;if(!p.dead){body(p);arrow(p,p.facing);if(p.state==='attack'&&p.attackTimer>0&&(!p.externalAttackAnimation||p.attackFrameReady))box(p.attackBox,'#ff355b')}
  for(const e of enemies){if(e.dead)continue;body(e);arrow(e,e.meleePending||e.attackTimer>0?e.meleeFacing:e.facing);box(e.room===1&&e.pendingAttack==='melee'?industrialAttackBox(e):enemyAttackBox(e),'#ff355b');for(const q of e.projectiles||[])box({x:q.x,y:q.y,w:12,h:12},'#ff355b')}
- for(const b of state.bosses){if(!b.active||b.dead)continue;body(b);arrow(b,b.walkFacing??b.facing);
+ for(const b of state.bosses){if(!b.active||b.dead)continue;if(b.assetId==='warden'){c.lineWidth=3;box(b,'#3c8fff');c.lineWidth=1;}else body(b);arrow(b,b.walkFacing??b.facing);
+  if(b.assetId==='warden'){box(wardenHurtbox(b),'#60ff8d',true);for(const q of [...(b.offense||[]),...(b.waves||[])]){box(q,'#ff355b');c.fillStyle='#ffe8b7';c.fillText(q.source,q.x,q.y-4);}}
   if(b.matronaState==='beam_fire'&&b.beam){const {a,z,radius}=b.beam;c.save();c.globalAlpha=.4;c.lineCap='round';c.lineWidth=radius*2;c.strokeStyle='#ff355b';c.beginPath();c.moveTo(a.x,a.y);c.lineTo(z.x,z.y);c.stroke();c.restore()}
   if(b.matronaState==='quarantine_strike')for(const z of b.zones||[])box(z,'#ff355b');
   for(const q of b.projectiles||[])box({x:q.x,y:q.y,w:17,h:12},'#ff355b');

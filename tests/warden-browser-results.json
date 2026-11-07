@@ -1,0 +1,15 @@
+{
+  "report": {
+    "checks": 29,
+    "assets": {
+      "total": 13,
+      "ready": 13,
+      "failed": 0,
+      "loading": 0,
+      "errors": [],
+      "elapsed": 144.89999997615814
+    }
+  },
+  "lifecycle": "respawn, complete two-phase fight, rewards once, victory event, save",
+  "errors": []
+}

@@ -1,17 +1,19 @@
+import{updateWarden,clearWarden,renderWarden,wardenHurtbox,transitionWarden}from'./warden.js';
 import{hurt,intersects}from'./combat.js';
-import{REGIONS,ROOM_W,GROUND,MATRONA_ARENA}from'./map.js';
+import{REGIONS,ROOM_W,GROUND,MATRONA_ARENA,WARDEN_ARENA}from'./map.js';
 import{updateMatrona,clearMatrona,matronaAnimation,matronaFrame,renderMatronaEffects}from'./matrona.js';
 export const BOSS_DATA=[
  {id:'boss-0',assetId:'matrona',room:0,name:'MATRONA Â· VIGILÃ‚NCIA DO SETOR 9',title:'Matrona',ability:'dash',hp:180,color:'#e26b68',intro:'Unidade Matrona: o Setor 9 estÃ¡ isolado. Nenhum registro da Aurora Dynamics deixarÃ¡ esta regiÃ£o.'},
- {id:'boss-2',assetId:'warden',room:1,name:'WARDEN Â· SEGURANÃ‡A INDUSTRIAL',title:'Warden',ability:'emp',hp:240,color:'#9984ff',intro:'Warden: os dispositivos continuarÃ£o saindo. Sua investigaÃ§Ã£o termina antes da Torre Aurora.'},
+ {id:'boss-2',assetId:'warden',room:1,name:'WARDEN · SEGURANÇA INDUSTRIAL',title:'Warden',ability:'emp',hp:240,color:'#9984ff',intro:'Warden: os dispositivos continuarão saindo. Sua investigação termina antes da Torre Aurora.'},
  {id:'boss-3',assetId:'vespera',room:2,name:'VÃ‰SPERA Â· DIRETORA DO PROJETO',title:'VÃ©spera',ability:null,hp:320,color:'#ff4f93',intro:'VÃ©spera: a cidade chama caos de liberdade. Minha rede acabarÃ¡ com seus conflitos. A epidemia foi apenas o primeiro teste.'}
 ];
-export function createBosses(){return BOSS_DATA.map(d=>({...d,x:REGIONS[d.room].x+(d.room===1?2470:2070),y:GROUND-132,w:74,h:132,health:d.hp,maxHealth:d.hp,arena:d.room===0?{...MATRONA_ARENA}:{left:REGIONS[d.room].x+(d.room===1?2090:1690),right:REGIONS[d.room].x+(d.room===1?2760:2360)},active:false,dead:false,phase:1,timer:.8,warning:0,attackType:'recovery',hitCooldown:0,projectiles:[]}))}
+export function createBosses(){return BOSS_DATA.map(d=>({...d,x:d.room===1?WARDEN_ARENA.spawnX:REGIONS[d.room].x+2070,y:GROUND-(d.room===1?112:132),w:d.room===1?64:74,h:d.room===1?112:132,health:d.hp,maxHealth:d.hp,arena:d.room===1?{...WARDEN_ARENA}:d.room===0?{...MATRONA_ARENA}:{left:REGIONS[d.room].x+(d.room===1?2090:1690),right:REGIONS[d.room].x+(d.room===1?2760:2360)},active:false,dead:false,phase:1,timer:.8,warning:0,attackType:'recovery',hitCooldown:0,projectiles:[]}))}
 export function updateBoss(b,p,dt,context={}){
  if(b.dead)return null;
  const inside=p.x+p.w>b.arena.left&&p.x<b.arena.right&&(b.assetId!=='matrona'||p.y+p.h>=GROUND-140);
  if(!b.active&&inside){b.active=true;b.timer=1;b.attackType='recovery';return{kind:'intro',boss:b}}
  if(!b.active)return null;
+ if(b.assetId==='warden'){updateWarden(b,p,dt,context);return null}
  if(b.assetId==='matrona'){updateMatrona(b,p,dt,context);return null}
  if(b.attackType!=='windup')b.facing=p.x>b.x?1:-1;
  b.hitCooldown=Math.max(0,b.hitCooldown-dt);b.timer-=dt;
@@ -37,9 +39,10 @@ export function updateBoss(b,p,dt,context={}){
  b.projectiles=b.projectiles.filter(x=>x.life>0);
  return null;
 }
-export function damageBoss(b,player){if(!b?.active||b.dead||player.attackTimer<=0||player.state!=='attack'||player.attackHitConsumed||b.attackType==='windup'||b.hitCooldown>0||(player.externalAttackAnimation&&!player.attackFrameReady))return false;if(!intersects(player.attackBox,b))return false;b.health=Math.max(0,b.health-(player.overloadTimer>0?38:20+player.combo*3));b.hitCooldown=.16;player.attackHitConsumed=true;if(!b.health){b.dead=true;b.deathTimer=.9;b.projectiles=[];if(b.assetId==='matrona')clearMatrona(b);return true}return false}
+export function damageBoss(b,player){if(!b?.active||b.dead||player.attackTimer<=0||player.state!=='attack'||player.attackHitConsumed||(b.attackType==='windup'||(b.assetId==='warden'&&b.wardenState==='transition'))||b.hitCooldown>0||(player.externalAttackAnimation&&!player.attackFrameReady))return false;if(!intersects(player.attackBox,b.assetId==="warden"?wardenHurtbox(b):b))return false;b.health=Math.max(0,b.health-(player.overloadTimer>0?38:20+player.combo*3));b.hitCooldown=.16;player.attackHitConsumed=true;if(b.assetId==='warden'&&b.health>0&&b.health<=b.maxHealth*.5)transitionWarden(b);if(!b.health){b.dead=true;b.deathTimer=.9;b.projectiles=[];if(b.assetId==='matrona')clearMatrona(b);if(b.assetId==='warden')clearWarden(b);return true}return false}
 export function renderBoss(c,b,camera,spriteRenderer,dt=0){
  if(!b.active||(b.dead&&!(b.deathTimer>0)))return;
+ if(b.assetId==='warden'){renderWarden(c,b,camera,spriteRenderer);return}
  const x=Math.round(b.x-camera.x),y=Math.round(b.y-camera.y),id=b.assetId||'matrona';
  const anim=b.dead?'death':id==='matrona'?matronaAnimation(b):b.warning>0?'attack':b.hitCooldown>0?'damage':'idle';
  const fallback=spriteRenderer?.assets?.getConfig(id)?.fallbackAnimation;

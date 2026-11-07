@@ -10,6 +10,7 @@ export const REGIONS=[
  {id:'corporate',name:'Torre Aurora',subtitle:'ATO III · A REDE DE CONTROLE',color:'#1c2037',x:ROOM_W*2+400}
 ];
 for(const r of REGIONS)r.width=r.id==='factory'?2800:ROOM_W;
+export const WARDEN_ARENA=Object.freeze({left:REGIONS[1].x+REGIONS[1].width-710,right:REGIONS[1].x+REGIONS[1].width-40,floor:GROUND,spawnX:REGIONS[1].x+REGIONS[1].width-290});
 export const WORLD_W=REGIONS.at(-1).x+REGIONS.at(-1).width;
 export function regionAt(x){return REGIONS.find(r=>x>=r.x&&x<r.x+r.width)||(x<0?REGIONS[0]:REGIONS.at(-1))}
 export function assetRegionAt(x){const r=regionAt(x);return r.id==='slum'?'slums':r.id==='factory'?'industrial':x>=r.x+1500?'virus_core':'corporate'}

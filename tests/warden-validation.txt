@@ -1,0 +1,33 @@
+warden EXIT 0
+PASS: Warden six PNG grids; movement, all attacks and both phases at 30/60/120 FPS; damage, telegraphs, jump/dash, unique transition, death cleanup, old saves, victory persistence, arena camera.
+
+campaign EXIT 0
+PASS: three-map campaign, gates, arenas, three bosses at 30/60/120 FPS, shortcuts, dimensions, 20 legacy-save migrations, persistence and checkpoints.
+
+matrona EXIT 0
+PASS: Matrona at 30/60/120 FPS: diagonal geometry, locked aim, damage, invulnerability, recovery, surfaces, safe space, movement, attack selection, death/reset.
+
+factory EXIT 0
+PASS: factory damage, telegraphs, height, projectile consumption/death cleanup, pool boundaries, full floor route and optional platform jumps at 30/60/120 FPS; saves and camera.
+
+combat EXIT 0
+PASS: 159 combat checks at 30/60/120 FPS.
+
+dash EXIT 0
+PASS: 4592 dash checks at 30/60/120 FPS.
+
+player-animation EXIT 0
+PASS: landing, walk/run, jump/fall/idle, collisions, priorities, animation continuity and hit event (30/60/120 fps).
+
+sector9 EXIT 0
+PASS: Setor 9 at 30/60/120 FPS: left/right melee, height, airborne damage, invulnerability, knockback, roofs, beam run/jump/dash escapes, close/mid/far movement and pauses.
+
+oren EXIT 0
+PASS: Oren PNG, two existing locations, conversation progression, price/effect, insufficient credits, six-tier limit, old/current saves and Yara independence.
+
+yara-dialogue EXIT 0
+PASS: Yara identity, friendship conversations, chronological selection, old events, persistence, objectives and completed quests.
+
+browser-warden EXIT 0
+PASS browser Warden: 29 checks; respawn, complete two-phase fight, rewards once, victory event, save; six screenshots.
+

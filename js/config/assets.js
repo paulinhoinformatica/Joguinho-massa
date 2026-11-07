@@ -9,7 +9,7 @@ export const ASSET_MANIFEST={
   infected_drone:{category:'enemies',name:'Drone infetado',config:'assets/enemies/infected_drone/config.json',regions:['slums','industrial','corporate','virus_core']},
   infected_robot:{category:'enemies',name:'Robô industrial corrompido',config:'assets/enemies/infected_robot/config.json',regions:['slums','industrial','corporate','virus_core']},
   matrona:{category:'bosses',name:'Matrona-7',config:'assets/bosses/matrona/config.json',regions:['slums']},abismo:{category:'bosses',name:'Abismo',config:'assets/bosses/abismo/config.json',procedural:true,regions:[]},
-  warden:{category:'bosses',name:'Warden Prime',config:'assets/bosses/warden/config.json',procedural:true,regions:['industrial']},vespera:{category:'bosses',name:'Véspera',config:'assets/bosses/vespera/config.json',procedural:true,regions:['corporate','virus_core']},
+  warden:{category:'bosses',name:'Warden Prime',config:'assets/bosses/warden/config.json',regions:['industrial']},vespera:{category:'bosses',name:'Véspera',config:'assets/bosses/vespera/config.json',procedural:true,regions:['corporate','virus_core']},
   emp_pulse:{procedural:true,category:'effects',name:'Pulso eletromagnético',config:'assets/effects/emp_pulse/config.json',regions:['slums','industrial','corporate','virus_core']},
   npc_survivor:{procedural:true,category:'characters',name:'Habitante sobrevivente',config:'assets/characters/npcs/survivor/config.json',regions:['slums','industrial','corporate','virus_core']},
   yara:{category:'characters',name:'Yara',config:'assets/characters/npcs/yara/config.json',regions:['slums']},
